@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
+    <link href='https://fonts.googleapis.com/css?family=Josefin+Sans' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="/static/Asset_Record/css/webtiengviet.css">
+    <link rel="stylesheet" href="/static/Asset_Record/css/animation.css">
+    <link rel="stylesheet" href="/static/Asset_Homepage/assets/asset_binh/bootstrap-4.5.0-dist/css/bootstrap.css">
+    <script src="/static/Asset_Homepage/assets/asset_binh/bootstrap-4.5.0-dist/js/jquery 3.5.0.js"></script>
+    <script src="/static/Asset_Homepage/assets/asset_binh/bootstrap-4.5.0-dist/js/bootstrap.js"></script>
+    <script src="/static/Asset_Homepage/assets/asset_binh/bootstrap-4.5.0-dist/js/popper.min.js"></script>
+    <script src="/static/Asset_Record/js/webtiengviet.js"></script>
+    <script src="/static/Asset_Record/js/WebAudioRecorder.min.js"></script>
+    <title>Học tiếng việt</title>
+</head>
+
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div id="header">
+                    <div class="progress">
+
+                        <div id="progress-bar" class="progress-bar
+                                progress-bar-striped" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                            0%
+                        </div>
+
+                    </div>
+                </div>
+                <div id="content">
+                    <h3>Kiểm tra tiếng việt - Bộ chủ đề: {{ques['tittle']}}</h3>
+                    <div id="para-area" class="d-flex">
+                        <img src="/static/Asset_Record/img/1.svg" alt="">
+                        <div class="para-content">
+                            <textarea id="text-random" class="bounding-para" rows="10" cols="59" readonly>
+                                </textarea>
+                        </div>
+                    </div>
+                    <div class="func">
+                        <button id="recordButton" class="btn btn-danger
+                                mr-2">Bắt đầu nói</button>
+                        <button id="streamButton" class="btn btn-danger
+                                mr-2 d-none">Streaming</button>
+                        <div id="recording-group">
+                            <p id="info_process" class="text-danger">Đang thu âm</p>
+                            <div id="hieuung3">
+                                <span class="rect1"></span>
+                                <span class="rect2"></span>
+                                <span class="rect3"></span>
+                                <span class="rect4"></span>
+
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div id="transcript">
+                        <p>Phát âm của bạn</p>
+                        <textarea id="textTrans" class="bounding-para" rows="10" cols="76"></textarea>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="content__container">
+                <p class="content__container__text">
+                    Thành viên:
+                </p>
+
+                <ul class="content__container__list">
+                    <li class="content__container__list__item"> Trần Mạnh Đạt</li>
+                    <li class="content__container__list__item"> Phạm Văn Đan</li>
+                    <li class="content__container__list__item"> Hoàng Trọng Bình
+                    </li>
+                    <li class="content__container__list__item"> Nguyễn Ngọc Anh
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="score">
+            <h3><span id="mypoint" class="font-weight-bold">0</span></h3>
+            <div class="circle one"></div>
+            <div class="circle two"></div>
+            <div class="circle three"></div>
+        </div>
+    </div>
+    <div id="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div id="check-div" class="check">
+                        <button class="skip-btn">Quay lại</button>
+                        <button id="check">
+                                <span id="check-label">Câu khác</span>
+                            </button>
+                    </div>
+                    <div id="check-true" class="check">
+                        <span class="font-weight-bold text-success" style="font-size: 2rem;">Tuyệt vời! Phát âm của
+                                bạn rất tốt!</span>
+                        <button class="continue btn btn-success">Tiếp
+                                tục</button>
+                    </div>
+                    <div id="check-fail" class="check">
+                        <span class="font-weight-bold text-danger" style="font-size: 2rem;">Độ chính xác: <span id="accurate">80</span>% ! Hãy cố gắng ở câu sau nhé bạn!
+                        </span>
+                        <button class="continue btn btn-danger">Tiếp
+                                tục</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <input type="hidden" name="" id="lstQues" value="{{ques['content']}}">
+</body>
+
+</html>

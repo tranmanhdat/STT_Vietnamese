@@ -1,0 +1,255 @@
+#header {
+    margin-top: 30px;
+}
+
+#content {
+    width: 600px;
+    margin: 0px auto;
+    margin-top: 1rem;
+}
+
+
+/* progress bar */
+
+#progress-bar {
+    width: 0%;
+}
+
+.para-content {
+    margin-top: 4rem;
+}
+
+#para-area {
+    border-bottom: 1px solid #e5e5e5;
+    margin-bottom: 1rem;
+}
+
+.bounding-para {
+    background-color: #fff;
+    padding: 12px 24px;
+    border: 2px solid #e5e5e5;
+    border-radius: 15px;
+    box-sizing: border-box;
+    overflow: hidden;
+    transform: translateZ(0);
+}
+
+#transcript {
+    border-top: 1px solid #e5e5e5;
+    margin-top: 1rem;
+}
+
+.trans-text {
+    display: inline-block;
+    margin-top: 1rem;
+}
+
+#footer {
+    min-height: 125px;
+    border-top: 1px solid #e5e5e5;
+}
+
+.check {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 35px;
+}
+
+#check-true {
+    display: none;
+}
+
+#check-fail {
+    background-color: #ffdfe0;
+    display: none;
+}
+
+.continue {
+    padding: 10px 50px !important;
+}
+
+
+/* ---------Hiệu ứng đang thu âm------ */
+
+.recording-group {
+    display: none;
+}
+
+.recording-group>p {
+    margin-bottom: 0px;
+    margin-top: 7px;
+    margin-right: 5px;
+}
+
+#hieuung3 {
+    width: 50px;
+    height: 38px;
+    text-align: center;
+    font-size: 10px;
+}
+
+#hieuung3>span {
+    background-color: #333;
+    border-radius: 2rem;
+    height: 100%;
+    width: 6px;
+    display: inline-block;
+    margin-right: 3px;
+    -webkit-animation: sk-stretchdelay 1.2s infinite ease-in-out;
+    animation: sk-stretchdelay 1.2s infinite ease-in-out;
+}
+
+#hieuung3 .rect2 {
+    -webkit-animation-delay: -1.1s;
+    animation-delay: -1.1s;
+}
+
+#hieuung3 .rect3 {
+    -webkit-animation-delay: -1.0s;
+    animation-delay: -1.0s;
+}
+
+#hieuung3 .rect4 {
+    -webkit-animation-delay: -0.9s;
+    animation-delay: -0.9s;
+}
+
+@-webkit-keyframes sk-stretchdelay {
+    0%,
+    40%,
+    100% {
+        -webkit-transform: scaleY(0.4)
+    }
+    20% {
+        -webkit-transform: scaleY(1.0)
+    }
+}
+
+@keyframes sk-stretchdelay {
+    0%,
+    40%,
+    100% {
+        transform: scaleY(0.4);
+        -webkit-transform: scaleY(0.4);
+    }
+    20% {
+        transform: scaleY(1.0);
+        -webkit-transform: scaleY(1.0);
+    }
+}
+
+
+/* Check */
+
+#check {
+    background: transparent;
+    text-align: center;
+    letter-spacing: 1px;
+    font-size: 1.4em;
+    line-height: 1.2em;
+    font-weight: 300;
+    width: 200px;
+    padding: 10px 0;
+    border: 1px solid #363858;
+    overflow: hidden;
+    transition: all 0.5s;
+    box-shadow: 0px 3px 0px #363858;
+    border-radius: 4px;
+}
+
+#check:hover,
+#check:active {
+    text-decoration: none;
+    color: #fff;
+    border-color: #363858;
+    background: #363858;
+    box-shadow: 0 0 0 #363858;
+}
+
+#check-label {
+    display: inline-block;
+    position: relative;
+    padding-right: 0;
+    transition: padding-right 0.5s;
+    color: #363858;
+    font-family: 'Exo 2', sans-serif;
+    font-weight: 200;
+}
+
+#check-label:after {
+    content: "";
+    position: absolute;
+    right: -50px;
+    opacity: 0;
+    top: 22%;
+    width: 10px;
+    height: 10px;
+    margin-right: -10px;
+    background: rgba(0, 0, 0, 0);
+    border: 3px solid #fff;
+    border-top: none;
+    border-right: none;
+    transition: opacity 0.5s, top 0.5s, right 0.5s;
+    transform: rotate(225deg);
+}
+
+#check:hover #check-label,
+#check:active #check-label {
+    padding-right: 30px;
+    color: #f5f1e7;
+}
+
+#check:hover #check-label:after,
+#check:active #check-label:after {
+    transition: opacity 0.5s, top 0.5s, right 0.5s;
+    opacity: 1;
+    right: 10px;
+    top: 22%;
+}
+
+.skip-btn {
+    background-color: rgb(236 229 229);
+    color: red;
+    font-weight: bolder;
+    font-family: 'Oswald', sans-serif;
+    text-align: center;
+    text-decoration: none;
+    width: 190px;
+    font-size: 13px;
+    line-height: 2em;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    transition: all 0.3s ease-in-out;
+    border: 2px solid #fff;
+}
+
+.skip-btn:before,
+.skip-btn:after {
+    width: 0%;
+    height: 2px;
+    position: absolute;
+    background: #e5c100;
+    transition: width 0.4s ease-in-out;
+    content: " ";
+}
+
+.skip-btn:before {
+    left: 0;
+    top: -2px;
+}
+
+.skip-btn:after {
+    bottom: -2px;
+    right: 0;
+}
+
+.skip-btn:hover {
+    padding: 5px 25px 5px 35px;
+    border-color: #e5c100;
+    color: green;
+}
+
+.skip-btn:hover:before,
+.skip-btn:hover:after {
+    width: auto;
+}
