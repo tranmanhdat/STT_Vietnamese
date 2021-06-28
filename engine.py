@@ -2,7 +2,7 @@ from subprocess import Popen, PIPE
 import os
 import signal
 
-model_path = "/root/src/asr/static/resources/model"
+model_path = "static/resources/model"
 w2l_bin = "/root/wav2letter/build/inference/inference/examples/interactive_streaming_asr_example"
 w2l_process = Popen(['{} --input_files_base_path={}'.format(w2l_bin, model_path)],
                       stdin=PIPE, stdout=PIPE, stderr=PIPE,
