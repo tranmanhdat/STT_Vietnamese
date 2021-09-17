@@ -25,11 +25,6 @@ h2 {
   text-transform: uppercase;
 }
 
-h3 {
-  font-weight: bold;
-  font-size: 120%;
-}
-
 p {
   margin: 1em 0;
 }
@@ -45,9 +40,14 @@ pre {
 red {
   color: red;
 }
-
+iframe {
+  max-width: 500px;
+  max-height: 50px;
+}
 a {
   color: #337ab7;
+  cursor: pointer;
+  font-size: 20px
 }
 p {
   margin-top: 1rem;
@@ -58,7 +58,10 @@ a:hover {
 a:visited {
   color: #8d75a3;
 }
-
+#username {
+  color: black;
+  font-size: 20px;
+}
 #controls {
   /* position: fixed; */
   display: flex;
@@ -67,7 +70,8 @@ a:visited {
 button {
   flex-grow: 1;
   height: 2.5rem;
-  min-width: 7rem;
+  min-width: 5rem;
+  max-width: 10rem;
   border: none;
   border-radius: 0.15rem;
   background: #ed341d;
@@ -108,39 +112,72 @@ li {
   list-style: none;
   margin-bottom: 1rem;
 }
-#formats {
-  margin-top: 0.5rem;
-  font-size: 80%;
-}
-#record {
-  float: left;
-  margin-right: 3rem;
-  max-width: 30rem;
-  min-width: 30rem;
-}
-.ulBtn {
-  float: left;
-  max-width: 7rem !important;
-}
 table, th, td {
   border: 1px solid black;
   border-collapse: collapse;
-  max-width: 1000px;
+  /*max-width: 1500px;*/
 }
 th, td {
   padding: 15px;
+  border: 1px solid black;
+}
+.inactive {
+  background: lightgray;
+}
+.inactive:hover, .inactive:focus {
+  outline: none;
+  background: gray;
+}
+.done {
+  background: green !important;
+}
+.done:hover, .done:focus {
+  outline: none;
+  background: green !important;
+}
+.redbtn {
+  background: red !important;
+}
+.redbtn:hover, .redbtn:focus {
+  outline: none;
+  background: darkred !important;
+}
+#username {
+  color: #005A9C;
+  font-weight: bold;
+}
+#loginA {
+  margin-left: 20px;
+  color: #337ab7;
+}
+#colId {
+  max-width: 4rem;
+}
+#colAudio {
+  min-width: 20rem;
+}
+#colTrans {
+  min-width: 20rem;
+}
+#resizeCol {
+  max-width: 50rem;
+}
+#textTrans {
+  min-width: 100%;
+  min-height: 5rem;
 }
 table {
-  width: 100rem;
+  max-width: 100rem;
 }
 
-#collectBtn, #cancelBtn {
-  max-width: 5rem;
+#editBtn, #saveBtn, #delBtn {
+  max-width: 2rem;
 }
 
 #collect {
   display: flex;
   margin-right: 5rem;
+  max-height: 5rem;
 }
 
 #status {
@@ -182,7 +219,6 @@ table {
   font-weight: bold;
   font-size: 1rem;
 }
-
 #failed {
   flex-grow: 1;
   height: 2.5rem;
@@ -202,12 +238,31 @@ table {
   font-weight: bold;
   font-size: 1rem;
 }
-
-#textTrans {
-  min-width: 30rem;
-  min-height: 15rem;
+#saveNextBtn {
+  min-width: 200px;
+  margin-left: 1200px;
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
-
+#filter {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+#start {
+  max-height: 20px;
+  max-width: 70px;
+}
+#filtBtn, #nextBtn, #backBtn{
+  margin-top: 20px;
+  margin-bottom: 20px;
+  max-width: 100px;
+}
+#header {
+  position: fixed
+}
+#list {
+  margin-left: 400px;
+}
 .cb {
   background: gray;
 }
@@ -215,17 +270,89 @@ table {
   outline: none;
   background: rgb(68, 68, 68);
 }
-
-.loader {
-  border: 16px solid #f3f3f3; /* Light grey */
-  border-top: 16px solid #005A9C; /* Blue */
-  border-radius: 50%;
-  width: 80px;
-  height: 80px;
-  animation: spin 2s linear infinite;
+/* Pagination links */
+.pagination a {
+  color: black;
+  float: left;
+  padding: 8px 16px;
+  text-decoration: none;
+  transition: background-color .3s;
 }
 
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+/* Style the active/current link */
+.pagination a.active {
+  background-color: red;
+  color: white;
+}
+
+/* Add a grey background color on mouse-over */
+.pagination a:hover:not(.active) {background-color: #ddd;}
+/* Customize the label (the container) */
+.checkbox {
+  display: block;
+  position: relative;
+  padding-left: 20px;
+  padding-bottom: 20px;
+  margin-left: 5px;
+  cursor: pointer;
+  font-size: 15px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Hide the browser's default radio button */
+.checkbox input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+/* Create a custom radio button */
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 20px;
+  width: 20px;
+  background-color: #eee;
+  border-radius: 50%;
+}
+
+/* On mouse-over, add a grey background color */
+.checkbox:hover input ~ .checkmark {
+  background-color: #ccc;
+}
+
+/* When the radio button is checked, add a blue background */
+.checkbox input:checked ~ .checkmark {
+  background-color: #2196F3;
+}
+
+/* Create the indicator (the dot/circle - hidden when not checked) */
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+/* Show the indicator (dot/circle) when checked */
+.checkbox input:checked ~ .checkmark:after {
+  display: block;
+}
+
+/* Style the indicator (dot/circle) */
+.checkbox .checkmark:after {
+  top: 8px;
+  left: 7px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: white;
+}
+#message {
+  margin-top: 0rem;
 }
