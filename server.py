@@ -245,7 +245,8 @@ def splitAudio(filename,sec_per_split):
     return lst_file
 if __name__ == "__main__":
     app.debug=True
-    app.run()
+    # app.run()
+    app.run(host="0.0.0.0", port=5000, use_reloader=False)
     # app.run(host='0.0.0.0', port=5555)
     # app.run(host='0.0.0.0', port=5000, ssl_context=('/home/tmd/project/asr/172.17.0.1:5555.crt', '/home/tmd/project/asr/172.17.0.1:5555.key'))
     #app.run(host='0.0.0.0', port=5555, ssl_context=('/tmp/192.168.0.104:5555.crt','/tmp/192.168.0.104:5555.key'))
