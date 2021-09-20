@@ -1,16 +1,15 @@
 from flask import Flask
-from flask import request
+
 app = Flask(__name__)
 import os
 import signal
 from subprocess import Popen, PIPE
-import time
+
 
 class FlashlightModel:
     def __init__(self, model_path):
         self.model_path = model_path
         self.w2l_bin = "/root/flashlight/build/bin/asr/fl_asr_tutorial_inference_ctc"
-
         inference_cmd = """%s \
                   --am_path=%s \
                   --tokens_path=%s \
@@ -30,7 +29,6 @@ class FlashlightModel:
         # print(inference_cmd)
         self.asr_process = self.create_process(inference_cmd)
         # time.sleep()
-
     def read_current_output(self, process):
         text =''
         while True:

@@ -1,25 +1,20 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from functools import partial
-from pydub import AudioSegment
-from flask import Flask, flash, redirect
-from flask import request, jsonify
-from flask import render_template, session
-import os, shutil
-from fl_service import FlashlightModel
+import os
+import shutil
 import sys
+from flask import Flask, flash, redirect
+from flask import render_template, session
+from flask import request
+from pydub import AudioSegment
+
+from fl_service import FlashlightModel
 
 app = Flask(__name__)
 app.secret_key = "abc_xyz"
 model_path = None
 w2l = None
 # CORS(app)
-
-# @app.route('/foo', methods=['POST'])
-# @cross_origin(origin='localhost',headers=['Content- Type','Authorization'])
-# def foo():
-#     return "request.json['inputVar']"
-
 app.config['UPLOAD_FOLDER'] = os.getcwd() + '/static/audios/'
 if not os.path.exists(app.config['UPLOAD_FOLDER']):
     os.mkdir(app.config['UPLOAD_FOLDER'])
@@ -84,7 +79,7 @@ def record_audio():
 def record_audio_auto():
     return render_template("my_record_auto.html")
 
-import time
+
 @app.route("/speech_to_text", methods=['GET'])
 def speech_to_text():
     # time.sleep(1)
