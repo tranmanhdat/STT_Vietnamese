@@ -3,7 +3,7 @@
 import sys
 from flask import Flask, render_template, request, json, redirect, url_for, \
     session
-from flashlight_model import FlashlightModel
+# from flashlight_model import FlashlightModel
 from audioUtils import standard_file
 import sqlite3
 from flask_session import Session
@@ -294,8 +294,8 @@ def splitAudio(filename, sec_per_split):
 
 if __name__ == "__main__":
     app.debug = True
-    model_path = sys.argv[1]
-    fl_model = FlashlightModel(model_path)
+    # model_path = sys.argv[1]
+    # fl_model = FlashlightModel(model_path)
     app.run(host="0.0.0.0", port=5000, use_reloader=False)
     # app.run(host='0.0.0.0', port=5555)
     # app.run(host='0.0.0.0', port=5000, ssl_context=('/home/tmd/project/asr/172.17.0.1:5555.crt', '/home/tmd/project/asr/172.17.0.1:5555.key'))
