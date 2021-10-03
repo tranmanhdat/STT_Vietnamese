@@ -38,7 +38,7 @@ def log_in():
         if is_exist:
             conn = sqlite3.connect("database.db")
             conn.row_factory = sqlite3.Row
-            cur = conn.cursor()main
+            cur = conn.cursor()
             cur.execute(
                 "SELECT * FROM user where username='{0}' and password='{1}'".format(
                     username, password))
