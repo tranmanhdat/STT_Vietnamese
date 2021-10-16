@@ -32,6 +32,7 @@ var data;
 $(document).ready(function() {
     //=============VARIABLE
     var lst_ques = $("#lstQues").val();
+    console.log(lst_ques)
     var ques_Arr = lst_ques.split("/*?space?*/");
     ques_Arr.pop();
     if (sessionStorage && sessionStorage.getItem("point")) {
@@ -126,6 +127,8 @@ $(document).ready(function() {
 
 function getRandomQues(ques_Arr) {
     var indexRand = Math.floor(Math.random() * ques_Arr.length); //get random key
+    console.log(ques_Arr)
+    console.log(ques_Arr.length)
     var res = ques_Arr[indexRand];
     console.log(indexRand);
     if (ques_Arr.length == 0) {
@@ -438,10 +441,13 @@ function handleUploadFile() {
     document.getElementById("progress").style.display = 'block'
 }
 
+// ==============
 function uploadWav() {
     document.getElementById("wav").click();
 }
 
+
+// ===========
 function uploadMp3() {
     document.getElementById("mp3").click();
 }

@@ -1,0 +1,36 @@
+{% extends "teachers_Layout.html" %}
+{%block title%}
+<title>Quản lý lớp - Giáo viên</title>
+{%endblock%}
+
+{% block content %}
+<div class="col-9 grid-margin">
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">
+                Quản lý lớp
+            </h4>
+            <table class="table table-striped" id="myTable">
+                <thead>
+                    <tr>
+                        <td>ID</td>
+                        <td>Tên lớp</td>
+                        <td>Quân số</td>
+                        <td>Chi tiết</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in all_classes%}
+                    <tr>
+                        <td>{{item[0]}}</td>
+                        <td>{{item[1]}}</td>
+                        <td>{{item[2]}}</td>
+                        <td><a href="{{url_for('classInfo',classId = item[0])}}">Chi tiết</a></td>
+                    </tr>
+                    {%endfor%}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{%endblock%}

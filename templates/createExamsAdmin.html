@@ -1,0 +1,146 @@
+{%extends "admin_Layout.html" %}
+{% block title%}
+<title>Tạo bài học - Admin</title>
+{%endblock%}
+
+{%block script_extra%}
+<script src="../static/js/DataTables/datatables.min.js"></script>
+<script src="../static/js/DataTables/DataTables-1.11.3/js/dataTables.bootstrap4.min.js"></script>
+<script>
+     $(document).ready(function(){
+        $('#myTable').dataTable({});
+     })
+</script>   
+{%endblock%}
+
+{% block style %}
+    <style>
+        input{
+            border: 0.5px solid #000;
+        }
+    </style>
+{%endblock%}
+{% block content %}
+<div class="col-9 grid-margin">
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-tittle">Số bài học đã tạo: {{num}}</h4>
+           
+            <table class="table table table-striped" id="myTable">     
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Tên bài</th>
+                        <th>Số câu</th>
+                        <th>Số học viên đã học</th>
+                    </tr>
+                </thead>
+                <tbody id="tbody">
+                    {% for item in category_info%}
+                        <tr>
+                            <td>{{item[0]}}</td>
+                            <td class="categoryName">{{item[1]}}</td>
+                            <td class="numQues">{{item[2]}}</td>
+                            <td></td>
+                        </tr>
+                    {%endfor%}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">Tạo bài học:</h4>
+            <form  class="form-sample" method="POST" >
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group row">
+                            <label for="" class="col-sm-3
+                                    col-form-label">Tên bài học: </label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" name="categoryName" id="categoryName">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="" class="col-sm-3
+                                    col-form-label">Số lượng câu hỏi</label>
+                            <div class="col-sm-9">
+                                <input type="number" class="form-control" min="1" max="100" value="10" id="numQues" name="numQues">
+                            </div>
+                        </div>
+                    </div>
+            
+                </div>
+                <div class="row" id="listQues">
+
+                </div>
+                <button type="button" class="btn btn-success" id="btn-submit">Tạo câu hỏi</button>
+            </form>
+        </div>
+    </div>
+</div>
+{%endblock%}
+
+{% block script%}
+<script>
+    $(document).ready(function() {
+        var numQues = $("#numQues").val();
+        showQuest(numQues);
+        $("#numQues").change(function() {
+            showQuest($(this).val());
+        });
+        //get list question
+       
+        $("#btn-submit").click(function() {
+            var contents = $('input[name="listQuestions[]"]').map(function() {
+                return $(this).val()
+            }).get();
+            var levels = $('input[name="listLevels[]"]').map(function(){
+                return $(this).val()
+            }).get();
+            var categoryName = $("#categoryName").val()
+            $.ajax({
+                url: '/createExamsAdmin',
+                type: 'post',
+                data: {
+                    categoryName: JSON.stringify(categoryName),
+                    contents: JSON.stringify(contents),
+                    levels: JSON.stringify(levels)
+                },
+                dataType: "json",
+                success: function(res) {
+                    if (res.status) {
+                        alert("Thêm bài học thành công!");
+                        window.location.reload();
+                    }
+                },
+                error: function(error) {
+                    console.log(error);
+                }
+            })
+        });
+      
+
+    });
+
+    function showQuest(numQues) {
+        $("#listQues").html("");
+        for (let i = 1; i <= numQues; i++) {
+            let res = '<div class="col-md-6">\
+                                <div class="form-group row">\
+                                    <label class="col-sm-3 col-form-label">Câu hỏi ' + i + '</label>\
+                                        <div class="col-sm-9">\
+                                            <input type="text" class="form-control" name="listQuestions[]"/>\
+                                        </div>\
+                                    <label class="col-sm-3 col-form-label"> Mức độ</label>\
+                                        <div class = "col-sm-9">\
+                                            <input type="text"\
+                                            class="form-control" name="listLevels[]"/>\
+                                            </div>\
+                                </div>\
+                        </div>';
+            $("#listQues").append(res);
+        }
+    }
+</script>
+{%endblock%}

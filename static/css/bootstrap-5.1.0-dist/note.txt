@@ -1,0 +1,10 @@
+======BOOSTRAP GRID========
+Breakpoints     Class infix        Dimensions
+X-small         None                0-576px
+small           sm                  >=576 px
+medium          md                  >=768px
+large           lg                  >= 992px
+Extra large     xl                  >=1200px
+Extra Extra large: xxl              >=1400px
+
+======BUTTONS======

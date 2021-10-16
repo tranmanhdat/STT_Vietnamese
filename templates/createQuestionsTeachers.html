@@ -1,0 +1,168 @@
+{%extends "teachers_Layout.html" %}
+{% block title%}
+<title>Tạo câu hỏi - Giáo viên</title>
+{%endblock%}
+{%block script_extra%}
+<script src="../static/js/DataTables/datatables.min.js"></script>
+<script src="../static/js/DataTables/DataTables-1.11.3/js/dataTables.bootstrap4.min.js"></script>
+<script>
+     $(document).ready(function(){
+        $('#myTable').dataTable({});
+     })
+</script>   
+{%endblock%}
+{% block style %}
+    <style>
+        input{
+            border: 0.5px solid #000;
+        }
+    </style>
+{%endblock%}
+{% block content %}
+<div class="col-9 grid-margin">
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-tittle">Số câu hỏi bạn đã tạo: {{num}}</h4>
+           
+            <table class="table table table-striped" id="myTable">     
+                <thead>
+                    <tr>
+                        <th>STT</th>
+                        <th>Nội dung</th>
+                        <th>Mức độ</th>
+                        <th>Xóa</th>
+                    </tr>
+                </thead>
+                <tbody id="tbody">
+                    {% for i in range(0,num)%}
+                        <tr>
+                            <td>{{i}}</td>
+                            <td class="content content_{{i}}">{{questions[i][1]}}</td>
+                            <td class="level level_{{i}}">{{questions[i][2]}}</td>
+                            <td ><button class="btn btn-erase btn-outline-danger" id="{{questions[i][0]}}"  >Xóa</button></td>
+                        </tr>
+                    {%endfor%}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">Tạo câu hỏi:</h4>
+            <form action="/createQuestionsTeachers" class="form-sample" method="POST" >
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group row">
+                            <label for="" class="col-sm-3
+                                    col-form-label">Số lượng câu hỏi</label>
+                            <div class="col-sm-9">
+                                <input type="number" class="form-control" min="1" max="100" value="10" id="numQues" name="numQues">
+                            </div>
+                        </div>
+                    </div>
+            
+                </div>
+                <div class="row" id="listQues">
+
+                </div>
+                <button type="button" class="btn btn-success" id="btn-submit">Tạo câu hỏi</button>
+            </form>
+        </div>
+    </div>
+</div>
+{%endblock%}
+
+{% block script%}
+<script>
+    $(document).ready(function() {
+        var numQues = $("#numQues").val();
+        // console.log(numQues)
+        // console.log("in da")
+        showQuest(numQues);
+        $("#numQues").change(function() {
+            showQuest($(this).val());
+        });
+        //get list question
+        $("#btn-submit").click(function() {
+            var contents = $('input[name="listQuestions[]"]').map(function() {
+                return $(this).val()
+            }).get();
+            var levels = $('input[name="listLevels[]"]').map(function(){
+                return $(this).val()
+            }).get();
+            
+            $.ajax({
+                url: '/createQuestionsTeachers',
+                type: 'post',
+                data: {
+                    contents: JSON.stringify(contents),
+                    levels: JSON.stringify(levels)
+                },
+                dataType: "json",
+                success: function(res) {
+                    if (res.status) {
+                        alert("Thêm câu hỏi thành công!");
+                        window.location.reload();
+                    }
+                },
+                error: function(error) {
+                    console.log(error);
+                }
+            })
+        });
+        $(".btn-erase").click(function(){
+            // console.log("hello")
+            // console.log(this.id)
+            var id = this.id
+            // console.log(id)
+            $.ajax({
+                url: '/eraseQuestions',
+                type: 'post',
+                data: {
+                    id: JSON.stringify(id)
+                },
+                dataType: "json",
+                success: function(res){
+                    if (res.status) {
+                        alert("Xóa câu hỏi thành công!")
+                        window.location.reload();
+                    }
+                },
+                error: function(error){
+                    console.log(error)
+                }
+            })
+        });
+        
+    //     $("#key").on('keyup',function(event){
+    //         event.preventDefault();
+    //         var key = $(this).val().toLowerCase();
+    //         console.log(key)
+    //         $('#tbody tr').filter(function() {
+    //             $(this).toggle($(this).text().toLowerCase().indexOf(key)>-1);
+    //   });
+        // });
+
+    });
+
+    function showQuest(numQues) {
+        $("#listQues").html("");
+        for (let i = 1; i <= numQues; i++) {
+            let res = '<div class="col-md-6">\
+                                <div class="form-group row">\
+                                    <label class="col-sm-3 col-form-label">Câu hỏi ' + i + '</label>\
+                                        <div class="col-sm-9">\
+                                            <input type="text" class="form-control" name="listQuestions[]"/>\
+                                        </div>\
+                                    <label class="col-sm-3 col-form-label"> Mức độ</label>\
+                                        <div class = "col-sm-9">\
+                                            <input type="text"\
+                                            class="form-control" name="listLevels[]"/>\
+                                            </div>\
+                                </div>\
+                        </div>';
+            $("#listQues").append(res);
+        }
+    }
+</script>
+{%endblock%}

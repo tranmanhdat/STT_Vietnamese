@@ -1,0 +1,60 @@
+{% extends "students_Layout.html" %}
+
+{%block title%}
+<title>Làm bài kiểm tra</title>
+{%endblock%}
+
+{%block script_extra%}
+<!-- <script type="text/javascript">
+    var sen_id = {{sen_id}};
+    var username = "{{username}}";
+    var user_id = {{id}};
+</script> -->
+{%endblock%}
+
+{% block tables%}
+<table class="table table-hover">
+        <thead>
+            <tr class="table100-head">
+                <th class="column1">ID</th>
+                <th class="column2">Nội dung</th>
+                <th class="column3">Controls</th>
+                <th class="column4">File</th>
+            </tr>
+        </thead>
+        
+        <tbody>
+            {% for i in range(0,sens_arr_number) %}
+        <tr>
+            <td id="colId_{{i}}" class="colId column1">{{sens_arr[i][0]}}</td>
+            <td id="colCau_{{i}}" class="content column2">
+                <label>{{sens_arr[i][1]}}</label>
+            </td>
+            <td id="colControls_{{i}}" class="controls column3">
+                <button id="recordButton_{{i}}" class="recordBtn btn btn-info" title="Record"><i class="ti-control-record"></i></button>
+                <button class="stop btn btn-info" id="stopButton_{{i}}" title="Stop" disabled><i class="ti-control-play"></i></button>
+            </td>
+            <td id="colWav_{{i}}" class="column4 audio">
+
+            </td>
+        </tr>
+        {%endfor%}
+        </tbody>
+
+</table>
+{%endblock%}
+
+{%block content%}
+{%endblock%}
+
+{%block extra%}
+<div align="center" class="table-control">
+    <button id="upAudio" onclick="upload()" class="btn btn-outline-success animated-swing"><i class="ti-upload"></i> Tải lên</button>
+    <!-- <button id="skip-btn" class="btn btn-outline-primary"><a href="{{url_for('skip')}}" >Bỏ qua </a></button> -->
+</div>
+{%endblock%}
+
+{%block script%}
+<script src='../static/js/app.js'></script>
+<script src="../static/js/recorder.js"></script>
+{%endblock%}

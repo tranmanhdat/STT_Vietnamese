@@ -10,21 +10,30 @@ var AudioContext = window.AudioContext || window.webkitAudioContext;
 var audioContext; //audio context to help us record
 var arrRecordButton = [];
 var arrStopButton = [];
+var audios =[]
 var cur_id;
 var arrBlob = [];
 var fileNames = [];
+var progress_bar = document.getElementById("progress-bar");
+for (let i=0;i<sen_id.length;i++) {
+    var recordButton = document.getElementById("recordButton_" + i);
+    var stopButton = document.getElementById("stopButton_" + i);
+    var audio = document.getElementById("colWav_"+i);
+    arrRecordButton.push(recordButton);
+    arrStopButton.push(stopButton);
+    audios.push(audio);
+}
+for (let i=0;i<sen_id.length;i++ ) {
+    arrRecordButton[i].addEventListener("click", function () {
+        startRecording(i);
+    }, false);
+    arrStopButton[i].addEventListener("click", function () {
+        stopRecording(i);
+        make_progress(audios,i);
+    }, false);
 
-var recordButton = document.getElementById("recordButton");
-var stopButton = document.getElementById("stopButton");
-arrRecordButton.push(recordButton);
-arrStopButton.push(stopButton);
+}
 
-arrRecordButton[0].addEventListener("click", function () {
-    startRecording(0);
-}, false);
-arrStopButton[0].addEventListener("click", function () {
-    stopRecording(0);
-}, false);
 
 
 function startRecording(stt) {
@@ -73,11 +82,22 @@ function stopRecording(_id) {
     rec.exportWAV(createDownloadLink);
 }
 
+function make_progress(audios,index){
+    list = document.getElementsByTagName("audio");
+    count = list.length+1;
+    console.log(count)
+    
+    var percent = (count/sen_id.length)*100;
+    console.log(progress_bar)
+    progress_bar.style.width = percent.toString()+"%";
+    percent = Math.round(percent*100)/100;
+    progress_bar.innerText = percent.toString()+"%";
+}
 
 
 function createDownloadLink(blob) {
-    console.log("current id : "+id[cur_id]);
-    var filename = user_name+"_"+id[cur_id]+".wav";
+    console.log("current id : "+sen_id[cur_id]);
+    var filename = username+"_" +sen_id[cur_id]+".wav";
     fileNames[cur_id] = filename;
     arrBlob[cur_id] = blob;
     let url = URL.createObjectURL(blob);
@@ -93,22 +113,31 @@ function createDownloadLink(blob) {
     theDiv.append(au);
 }
 
+function alert_function(message){
+
+}
+
 function upload() {
-    if (Array.isArray(arrBlob) && arrBlob.length && arrBlob.length == id.length) {
+    if (Array.isArray(arrBlob) && arrBlob.length && arrBlob.length >0) {
         let xhr = new XMLHttpRequest();
         var fd = new FormData();
         // fd.append("audio_data", arrBlob[0], fileNames[0]);
-        for (let j=0;j<id.length;j++){
-            fd.append("audio_data", arrBlob[j], fileNames[j]);
+        for (let j=0;j<sen_id.length;j++){
+            if (arrBlob[j]!=undefined)
+                fd.append("audio_data", arrBlob[j], fileNames[j]);
             // alert(fileNames[j]);
             // console.log(fileNames[j]);
         }
-        xhr.open("POST", "http://127.0.0.1:5000/save_audios", true);
+        xhr.open("POST", "/compare", true);
         xhr.send(fd);
-        alert("tải lên thành công");
-        window.location = "/";
+        alert("Tải lên thành công!");
+        // window.location = "/compare";
+        var result = xhr.responseText;
+        console.log(result)
 }
     else{
-        alert("Chưa đủ file thu âm!");
+        alert("Chưa có file thu âm nào!");
+        // window.location= "/"
+        window.location.reload()
     }
 }

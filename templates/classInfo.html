@@ -1,0 +1,53 @@
+{%extends "teachers_Layout.html" %}
+{%block title%}
+<title>Quản lý lớp</title>
+{%endblock%}
+{%block script_extra%}
+<script src="../static/js/DataTables/datatables.min.js"></script>
+<script src="../static/js/DataTables/DataTables-1.11.3/js/dataTables.bootstrap4.min.js"></script>
+<script>
+     $(document).ready(function(){
+        $('#myTable').dataTable({});
+     })
+</script>   
+{%endblock%}
+
+{%block content%}
+<div class="col-9 grid-margin">
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">
+                Lớp {{className}}
+            </h4>
+            <h4>
+                Số bài thi, kiểm tra: {{numTests}}
+            </h4>
+            <table class="table table-striped" id="myTable">
+                <thead>
+                    <tr>
+                        <td>STT</td>
+                        <td>Mã học viên</td>
+                        <td>Tên đầy đủ</td>
+                        {% for name in testNames%}
+                        <td style="width: 8%">{{name}}</td>
+                        {%endfor%}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i in range(0, studentNum) %}
+                    <tr>
+                        <td>{{i}}</td>
+                        <td>{{studentCodes[i]}}</td>
+                        <td>{{studentNames[i]}}</td>
+                        {% for i in range(0,numTests) %}
+                        <td style="width: 8%">{{marks[i]}}</a></td>
+                        {%endfor%}
+                    </tr>
+                    {%endfor%}
+                </tbody>
+            </table>
+          
+        </div>
+    </div>
+</div>
+{%endblock%}

@@ -11,7 +11,8 @@
     <link rel="stylesheet" href="/static/Asset_Record/css/webtiengviet.css">
     <link rel="stylesheet" href="/static/Asset_Record/css/animation.css">
     <link rel="stylesheet" href="/static/Asset_Homepage/assets/asset_binh/bootstrap-4.5.0-dist/css/bootstrap.css">
-    <script src="/static/Asset_Homepage/assets/asset_binh/bootstrap-4.5.0-dist/js/jquery 3.5.0.js"></script>
+    <!-- <script src="/static/Asset_Homepage/assets/asset_binh/bootstrap-4.5.0-dist/js/jquery 3.5.0.js"></script> -->
+    <script src="/static/js/jquery-3.6.0.min.js"></script>
     <script src="/static/Asset_Homepage/assets/asset_binh/bootstrap-4.5.0-dist/js/bootstrap.js"></script>
     <script src="/static/Asset_Homepage/assets/asset_binh/bootstrap-4.5.0-dist/js/popper.min.js"></script>
     <link rel="stylesheet" href="/static/Asset_Profile/assets/vendors/iconfonts/mdi/css/materialdesignicons.min.css">
@@ -24,10 +25,14 @@
     <!-- Layout styles -->
     <link rel="stylesheet" href="/static/Asset_Profile/assets/css/demo_1/style.css">
     <!-- End Layout styles -->
-    <link rel="shortcut icon" href="/static/Asset_Profile/assets/images/favicon.ico" />
-    <script src="/static/Asset_Record/js/webtiengviet.js"></script>
-    <script src="/static/Asset_Record/js/WebAudioRecorder.min.js"></script>
-    <title>Học tiếng việt</title>
+    <!-- <link rel="shortcut icon" href="/static/Asset_Profile/assets/images/favicon.ico" /> -->
+    <!-- <script src="/static/Asset_Record/js/webtiengviet.js"></script>
+    <script src="/static/Asset_Record/js/WebAudioRecorder.min.js"></script> -->
+    <script type="text/javascript">
+        var sen_id = {{id_arr}};
+        var username = {{id}}
+    </script>
+    <title>Làm bài kiểm tra</title>
 </head>
 
 <body>
@@ -38,7 +43,7 @@
             <div class="text-center navbar-brand-wrapper d-flex align-items-top
           justify-content-center">
                 <a class="navbar-brand brand-logo" href="/home">
-                    <img src="/static/Asset_Profile/assets/images/logo.svg" alt="logo" /> </a>
+                    <!-- <img src="/static/Asset_Profile/assets/images/faces/face8.jpg" alt="logo" /> </a> -->
                 <a class="navbar-brand brand-logo-mini" href="/home">
                     MTA </a>
             </div>
@@ -99,7 +104,6 @@
                             <i class="mdi mdi-email-outline"></i>
                             <span class="count bg-success">3</span>
                         </a>
-
                     </li>
                     <li class="nav-item dropdown d-none d-xl-inline-block
               user-dropdown">
@@ -111,7 +115,7 @@
                             <div class="dropdown-header text-center">
                                 <img class="img-md rounded-circle"
                                     src="/static/Asset_Profile/assets/images/faces/face8.jpg" alt="Profile image">
-                                <p class="mb-1 mt-3 font-weight-semibold">{{name}}</p>
+                                <p class="mb-1 mt-3 font-weight-semibold">{{fullname}}</p>
                                 <p class="font-weight-light text-muted mb-0">user@gmail.com</p>
                             </div>
                             <a class="dropdown-item">Thông tin của tôi <span class="badge
@@ -146,18 +150,18 @@
                                 <div class="dot-indicator bg-success"></div>
                             </div>
                             <div class="text-wrapper">
-                                <p class="profile-name">{{name}}</p>
+                                <p class="profile-name">{{fullname}}</p>
                                 <p class="designation">Tài khoản kim cương</p>
                             </div>
                         </a>
                     </li>
                     <li class="nav-item nav-category">Menu chính</li>
-                    <li class="nav-item">
+                    <!-- <li class="nav-item">
                         <a class="nav-link" href="/profile">
                             <i class="menu-icon typcn typcn-document-text"></i>
                             <span class="menu-title">Thống kê</span>
                         </a>
-                    </li>
+                    </li> -->
                     <li class="nav-item">
                         <a class="nav-link" href="/selectExams">
                             <i class="menu-icon typcn typcn-shopping-bag"></i>
@@ -178,7 +182,7 @@
                     </li>
                 </ul>
             </nav>
-            <div class="col-10">
+            <div class="col-9">
                 <div class="container">
                     <div class="row">
                         <div class="col-md-12">
@@ -194,82 +198,84 @@
                                 </div>
                             </div>
                             <div id="content">
-                                <h3>Bài thi: {{ques['tittle']}}</h3>
-                                <p>Thời gian làm bài: 60 phút</p>
+                                <h3>{{name}}</h3>
+                                <p>Thời gian làm bài: <span id="time_todo">{{time_todo}}</span> phút</p>
+                                <p>Số câu: {{quesNum}}</p>
                                 <form name="cd">
                                     Thời gian còn lại: <input id="txt" readonly="true" type="text" value="10:00" name="disp" style="border:0;color:red;">
                                     </form>
-                                <div id="para-area" class="d-flex">
-                                    <img src="/static/img/1.svg" alt="">
-                                    <div>
-                                        <textarea id="text-random" class="bounding-para" rows="10" cols="59" readonly>
-                                            </textarea>
-                                    </div>
-                                </div>
-                                <div class="func">
-                                    <button id="recordButton" class="btn btn-danger
-                                            mr-2">Bắt đầu nói</button>
-                                    <button id="streamButton" class="btn btn-danger
-                                            mr-2">Streaming</button>
-                                    <div id="recording-group">
-                                        <p id="info_process" class="text-danger">Đang thu âm</p>
-                                        <div id="hieuung3">
-                                            <span class="rect1"></span>
-                                            <span class="rect2"></span>
-                                            <span class="rect3"></span>
-                                            <span class="rect4"></span>
-            
-                                        </div>
-                                    </div>
-                                </div>
-            
-            
-                                <div id="transcript">
-                                    <p>Phát âm của bạn</p>
-                                    <textarea id="textTrans" class="bounding-para" rows="10" cols="76"></textarea>
-                                </div>
-            
+                                
+                                </div> 
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr class="table100-head">
+                                            <th class="column1">ID</th>
+                                            <th class="column2">Nội dung</th>
+                                            <th class="column3">Controls</th>
+                                            <th class="column4">File</th>
+                                        </tr>
+                                    </thead>
+                                    
+                                    <tbody>
+                                        {% for i in range(0,quesNum) %}
+                                    <tr>
+                                        <td id="colId_{{i}}" class="colId column1">{{i}}</td>
+                                        <td id="colCau_{{i}}" class="column2">
+                                            {{content_arr[i]}}
+                                        </td>
+                                        <td id="colControls_{{i}}" class="controls column3">
+                                            <button id="recordButton_{{i}}" class="recordBtn btn btn-info" title="Record">Ghi âm</button>
+                                            <button class="stop btn btn-info" id="stopButton_{{i}}" title="Stop" disabled>Dừng lại</button>
+                                        </td>
+                                        <td id="colWav_{{i}}" class="column4">
+                            
+                                        </td>
+                                    </tr>
+                                    {%endfor%}
+                                    </tbody>
+                            
+                            </table>
+                            <button type="submit" class="btn btn-danger" onclick="upload()">Nộp bài</button>
                             </div>
             
                         </div>
                     </div>
             
-                    <div class="content">
+                    <!-- <div class="content">
                         <div class="content__container">
                             <p class="content__container__text">
                                 Thành viên:
                             </p>
             
-                            <ul class="content__container__list">
+                             <ul class="content__container__list"> 
                                 <li class="content__container__list__item"> Trần Mạnh Đạt</li>
                                 <li class="content__container__list__item"> Phạm Văn Đan</li>
                                 <li class="content__container__list__item"> Hoàng Trọng Bình
                                 </li>
                                 <li class="content__container__list__item"> Nguyễn Ngọc Anh
                                 </li>
-                            </ul>
+                            </ul> 
                         </div>
-                    </div>
-                    <div class="score">
+                    </div> -->
+                    <!-- <div class="score">
                         <h3><span id="mypoint" class="font-weight-bold">0</span></h3>
                         <div class="circle one"></div>
                         <div class="circle two"></div>
                         <div class="circle three"></div>
-                    </div>
+                    </div> -->
                 </div>
                 <div id="footer">
                     <div class="container">
                         <div class="row">
                             <div class="col-md-12">
-                                <div id="check-div" class="check">
+                                <!-- <div id="check-div" class="check">
                                     <button class="skip-btn">Quay lại</button>
                                     <button id="check">
                                         <span id="check-label">Câu khác</span>
                                     </button>
-                                </div>
-                                <div id="check-true" class="check">
-                                    <span class="font-weight-bold text-success" style="font-size: 2rem;">Tuyệt vời! Phát âm của
-                                        bạn rất tốt!</span>
+                                </div> -->
+                                <!-- <div id="check-true" class="check">
+                                    <span class="font-weight-bold text-success" style="font-size: 2rem;">Tuyệt vời! Phát âm của bạn rất tốt!</span>
                                     <button class="continue btn btn-success">Tiếp
                                         tục</button>
                                 </div>
@@ -279,24 +285,25 @@
                                     </span>
                                     <button class="continue btn btn-danger">Tiếp
                                         tục</button>
-                                </div>
+                                </div> -->
                             </div>
                         </div>
                     </div>
             
                 </div>
-                <input type="hidden" name="" id="lstQues" value="{{ques['content']}}">
+              
             </div>
         </div>
     </div>
+    <script src="/static/js/app.js"></script>
+    <script src="/static/js/recorder.js"></script>
     <script language="javascript">
-        // Created by: Neill Broderick :: http://www.bespoke-software-solutions.co.uk/downloads/downjs.php
-        
+      
         var mins
         var secs;
-        
+        var time_todo = document.getElementById("time_todo").innerText
         function cd() {
-             mins = 1 * m("10"); // change minutes here
+             mins = 1 * m(time_todo); // change minutes here
              secs = 0 + s(":01"); // change seconds here (always add an additional second to your total)
              redo();
         }

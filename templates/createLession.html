@@ -1,0 +1,212 @@
+{% extends "teachers_layout.html" %}
+{%block title%}
+<title>Tạo bài học - Giáo viên</title>
+{%endblock%}
+
+{%block content%}
+<div class="col-9 grid-margin">
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">Tạo bài học phát âm cho học viên</h4>
+            <form class="form-sample">
+                <p class="card-description">Thông tin bài học</p>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group row">
+                            <label class="col-sm-3
+                                    col-form-label">Tên bài</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="tittle" required />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group row">
+                            <label class="col-sm-3
+                                    col-form-label">Tên tiếng anh</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="tittle-en" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group row">
+                            <label class="col-sm-3
+                                    col-form-label">Chủ đề</label>
+                            <div class="col-sm-9">
+                                <select class="form-control" id="topic">
+                                        <option>Xã hội</option>
+                                        <option>Thể thao</option>
+                                        <option>Đồ vật</option>
+                                        <option>Âm nhạc</option>
+                                        <option>Đời thường</option>
+                                        <option>Lễ hội</option>
+                                        <option>Học tập</option>
+                                        <option>Khác</option>
+                                    </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group row">
+                            <label class="col-sm-3
+                                    col-form-label">Ngày tạo</label>
+                            <div class="col-sm-9">
+                                <input type="datetime-local" class="form-control" placeholder="dd/mm/yyyy" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group row">
+                            <label class="col-sm-3
+                                    col-form-label">Kích hoạt</label>
+                            <div class="col-sm-9">
+                                <select class="form-control">
+                                        <option>Đăng lên hệ thống</option>
+                                        <option>Cá nhân</option>
+                                        <option>Chỉ định</option>
+                                    </select>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- <div class="col-md-6">
+                        <div class="form-group row">
+                            <label class="col-sm-3
+                                    col-form-label">Hình thức</label>
+                            <div class="col-sm-4">
+                                <div class="form-radio">
+                                    <label class="form-check-label">
+                                            <input type="radio"
+                                                class="typeTest"
+                                                name="typeTest"
+                                                id="membershipRadios1"
+                                                value="1" checked>
+                                            Bài giảng </label>
+                                </div>
+                            </div>
+                            <div class="col-sm-5">
+                                <div class="form-radio">
+                                    <label class="form-check-label">
+                                            <input type="radio"
+                                                class="typeTest"
+                                                name="typeTest"
+                                                id="membershipRadios2"
+                                                value="2"> Thi kiểm tra </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div> -->
+                </div>
+                <p class="card-description"> Câu hỏi </p>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group row">
+                            <label class="col-sm-3
+                                    col-form-label">Số lượng câu hỏi</label>
+                            <div class="col-sm-9">
+                                <input type="number" class="form-control" min="1" max="100" value="10" id="numQues" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group row">
+                            <label class="col-sm-3
+                                    col-form-label">Mức độ bài học</label>
+                            <div class="col-sm-9">
+                                <select class="form-control" id="level_Test">
+                                        <option>Dễ</option>
+                                        <option>Trung bình</option>
+                                        <option>Khó</option>
+                                        <option>Tài năng</option>
+                                    </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" id="listQuest">
+                </div>
+                <button type="button" class="btn btn-success" style="margin-left: 47%;padding: 11px;" id="btn-submit">Tạo bài</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+{%endblock%}
+
+
+{% block script%}
+<script>
+    $(document).ready(function() {
+        var numQues = $("#numQues").val();
+        showQuest(numQues);
+        $("#numQues").change(function() {
+            showQuest($(this).val());
+        });
+        //get list question
+        $("#btn-submit").click(function() {
+            var values = $('input[name="listQuestions[]"]').map(function() {
+                return $(this).val()
+            }).get();
+            var questionsLevels = $('input[name ="listLevels[]"]').map(function(){
+                return $(this).val();
+            }).get();
+            let topic = $("#topic option:selected").text();
+            let tittle = $("#tittle").val();
+            let tittle_eng = $("#tittle-en").val();
+            // let typeTest=$("input:radio[name=typeTest]:checked").val();
+            let level_Test=$("#level_Test option:selected").text();
+            let info = {
+                topic: topic,
+                tittle: tittle,
+                tittle_eng: tittle_eng,
+                // typeTest:typeTest,
+                level_Test:level_Test
+            }
+            $.ajax({
+                url: '/createLession',
+                type: 'post',
+                data: {
+                    info: JSON.stringify(info),
+                    values: JSON.stringify(values),
+                    questionsLevels: JSON.stringify(questionsLevels)
+                },
+                dataType: "json",
+                success: function(res) {
+                    if (res.status) {
+                        alert("Thêm bài học thành công!");
+                        window.location.reload();
+                    }
+                },
+                error: function(error) {
+                    console.log(error);
+                }
+            })
+        });
+    });
+
+    function showQuest(numQues) {
+        $("#listQuest").html("");
+        for (let i = 1; i <= numQues; i++) {
+            let res = '<div class="col-md-6">\
+                            <div class="form-group row">\
+                                <label class="col-sm-3 col-form-label">Câu hỏi ' + i + '</label>\
+                                    <div class="col-sm-9">\
+                                        <input type="text" class="form-control" name="listQuestions[]"/>\
+                                    </div>\
+                                <label class="col-sm-3 col-form-label"> Mức độ</label>\
+                                    <div class = "col-sm-9">\
+                                        <input type="text"\
+                                        class="form-control" name="listLevels[]"/>\
+                                        </div>\
+                            </div>\
+                    </div>';
+            $("#listQuest").append(res);
+        }
+    }
+</script>
+{%endblock%}
+

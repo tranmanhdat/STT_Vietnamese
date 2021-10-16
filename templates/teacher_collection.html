@@ -1,0 +1,59 @@
+{%extends "teachers_Layout.html" %}
+{%block title%}
+
+<title>Thống kê - Giáo viên</title>
+{%endblock%}
+
+{% block content %}
+<div class="col-9 grid-margin">
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-tittle">Số câu hỏi bạn đã tạo: {{num}}</h4>
+           
+            <table class="table table table-striped" id="myTable">     
+                <thead>
+                    <tr>
+                        <th>Mức độ</th>
+                        <th>Số câu</th>
+                        <th>Xem chi tiết</th>
+                    </tr>
+                </thead>
+                <tbody id="tbody">
+                    {% for i in range(0,10)%}
+                        <tr>
+                            <td>{{i+1}}</td>
+                            <td >{{questions[i]}}</td>
+                            <td ><a href="{{url_for('question_each_level', level=i+1)}}">Chi tiết</a></td>
+                        </tr>
+                    {%endfor%}
+                </tbody>
+            </table>
+
+            <h4>Số bài thi đã tạo: {{numTests}}</h4>
+            <table class="table table-striped">
+                <thead>
+                    <td>STT</td>
+                    <td>Tên bài</td>
+                    <td>Số mã đề</td>
+                    <td>Số câu</td>
+                    <td>Thời gian làm</td>
+                    <td>Thời gian nộp</td>
+                    <td>Tình trạng</td>
+                </thead>
+                <tbody>
+                    {%for i in range(0,numTests) %}
+                    <tr>
+                        <td>{{i}}</td>
+                        <td>{{tests[i][2]}}</td>
+                        <td>{{tests[i][3]}}</td>
+                        <td>{{tests[i][4]}}</td>
+                        <td>{{tests[i][6]}}</td>
+                        <td>{{tests[i][7]}}</td>
+                    </tr>
+                    {%endfor%}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>   
+{%endblock%}

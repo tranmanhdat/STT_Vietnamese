@@ -6,15 +6,15 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Bootstrap core CSS -->
-    <link href="/static/Asset_Homepage/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../static/Asset_Homepage/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Additional CSS Files -->
-    <link rel="stylesheet" href="/static/Asset_Homepage/assets/css/fontawesome.css">
-    <link rel="stylesheet" href="/static/Asset_Homepage/assets/css/templatemo-grad-school.css">
-    <link rel="stylesheet" href="/static/Asset_Homepage/assets/css/owl.css">
-    <link rel="stylesheet" href="/static/Asset_Homepage/assets/css/lightbox.css">
+    <link rel="stylesheet" href="../static/Asset_Homepage/assets/css/fontawesome.css">
+    <link rel="stylesheet" href="../static/Asset_Homepage/assets/css/templatemo-grad-school.css">
+    <link rel="stylesheet" href="../static/Asset_Homepage/assets/css/owl.css">
+    <link rel="stylesheet" href="../static/Asset_Homepage/assets/css/lightbox.css">
     <!-- Additional js -->
-    <script src="/static/Asset_Homepage/assets/asset_binh/bootstrap-4.5.0-dist/js/jquery 3.5.0.js"></script>
+    <script src="../static/Asset_Homepage/assets/asset_binh/bootstrap-4.5.0-dist/js/jquery 3.5.0.js"></script>
     <title>Đăng nhập</title>
 </head>
 
@@ -306,18 +306,18 @@
                     <a href="#" class="social"><i class="fa
                                 fa-linkedin"></i></a>
                 </div>
-                <span>hoặc đăng ký email của bạn</span>
+                <span>hoặc đăng ký tài khoản của bạn</span>
                 <input type="text" placeholder="Họ tên" id="name_client" />
-                <input type="text" placeholder="Email" id="email_client" />
+                <input type="text" placeholder="Tên đăng nhập" id="username_client" />
                 <input type="password" placeholder="Mật khẩu" id="password_client" />
 
-                <div>
+                <!-- <div>
                     <label for="">Tư cách:</label>
                     <select name="" id="author">
                         <option value="0">Giáo viên</option>
                         <option value="1">Người học</option>
                     </select>
-                </div>
+                </div> -->
 
                 <button id="btn-signup" type="button">Đăng ký</button>
             </form>
@@ -333,7 +333,7 @@
                                 fa-linkedin"></i></a>
                 </div>
                 <span>hoặc sử dụng tài khoản của bạn</span>
-                <input type="text" placeholder="Email" id="username" />
+                <input type="text" placeholder="Tên hoặc mã đăng nhập" id="username" />
                 <input type="password" placeholder="Mật khẩu" id="password" />
                 <a href="#">Quên mật khẩu?</a>
                 <button id="btn-login" type="button">Đăng nhập</button>
@@ -348,7 +348,7 @@
                 </div>
                 <div class="overlay-panel overlay-right">
                     <h1>MTA Center!</h1>
-                    <p>Hãy đăng ký tài khoàn để học tập ngay hôm nay!</p>
+                    <p>Hãy đăng ký tài khoản để học tập ngay hôm nay!</p>
                     <button class="ghost" id="signUp">Đăng ký</button>
                 </div>
             </div>
@@ -392,17 +392,20 @@
             });
             $("#btn-signup").click(function() {
                 let name = $("#name_client").val();
-                let email = $("#email_client").val();
+                let username = $("#username_client").val();
                 let password = $("#password_client").val();
-                let author = $("#author").val();
+                // let author = $("#author").val();
+                console.log(name)
+                console.log(username)
+                console.log(password)
                 $.ajax({
                     url: '/signup',
                     type: 'post',
                     data: {
-                        name: name,
-                        email: email,
-                        password: password,
-                        author: author
+                        name: JSON.stringify(name),
+                        username: JSON.stringify(username),
+                        password: JSON.stringify(password),
+                        // author: author
                     },
                     dataType: "json",
                     success: function(res) {
