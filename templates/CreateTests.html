@@ -111,8 +111,8 @@
                         <h6>Chọn đối tượng làm bài: </h6>
                         {% for class in classes%}
                         <div class="form-group row">
-                            <input type="checkbox" name="class[]" id="" class="col-md-1 checkbox" value="{{class[0]}}">
-                            <label for="">{{class[1]}}</label>
+                            <input type="checkbox" name="class[]" id="{{class[0]}}" class="col-md-1 checkbox" value="{{class[0]}}">
+                            <label for="{{class[0]}}">{{class[1]}}</label>
                         </div>
                         {%endfor%}
                         <div class="form-group row">
