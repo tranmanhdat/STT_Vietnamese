@@ -21,7 +21,7 @@
                 <tbody id="tbody">
                     {% for i in range(0,10)%}
                         <tr>
-                            <td>{{i+1}}</td>
+                            <td>{{i+1}}/10</td>
                             <td >{{questions[i]}}</td>
                             <td ><a href="{{url_for('question_each_level', level=i+1)}}">Chi tiết</a></td>
                         </tr>
@@ -29,7 +29,7 @@
                 </tbody>
             </table>
 
-            <h4>Số bài thi đã tạo: {{numTests}}</h4>
+            <h4>Số bài thi/kiểm tra đã tạo: {{numTests}}</h4>
             <table class="table table-striped">
                 <thead>
                     <td>STT</td>
@@ -38,22 +38,113 @@
                     <td>Số câu</td>
                     <td>Thời gian làm</td>
                     <td>Thời gian nộp</td>
-                    <td>Tình trạng</td>
+                    <td>Xem chi tiết</td>
+                    <td>Số học viên đã làm</td>
+                    <td>Xóa</td>
                 </thead>
                 <tbody>
                     {%for i in range(0,numTests) %}
                     <tr>
-                        <td>{{i}}</td>
+                        <td>{{i+1}}</td>
                         <td>{{tests[i][2]}}</td>
                         <td>{{tests[i][3]}}</td>
                         <td>{{tests[i][4]}}</td>
-                        <td>{{tests[i][6]}}</td>
-                        <td>{{tests[i][7]}}</td>
+                        <td id="time_todo_{{tests[i][0]}}">
+                            <p class="hide_{{tests[i][0]}}">{{tests[i][6]}}</p>
+                            <input type="text" id="new_time_todo_{{tests[i][0]}}" style="display:none;width:70%">
+                        </td>
+
+                        <td id="time_submit_{{tests[i][0]}}">
+                            <p class="hide_{{tests[i][0]}}">{{tests[i][7]}}</p>
+                            <input type="date" id="date_{{tests[i][0]}}" name="trip-start"
+                            value="2021-07-22"
+                            min="2021-01-01" max="2025-12-31" style="display:none">
+                        </td>
+
+                        <td><a href="{{url_for('get_each_test_info',testId=tests[i][0])}}">Chi tiết</a></td>
+                        <td>{{tests[i][8]}}</td>
+                        <td><button class="btn btn-outline-danger btnDelete hide_{{tests[i][0]}}" id="{{tests[i][0]}}">Xóa</button></td>
+                        <td><button class="btn btn-outline-dark btnModify" id="{{tests[i][0]}}_">Chỉnh sửa</button></td>
+                        <td><button class="btn btn-outline-info btnSave" id="save_{{tests[i][0]}}" style="display:none">Lưu</button></td>
                     </tr>
                     {%endfor%}
                 </tbody>
             </table>
+            <button class="btn btn-primary" id="saveAll">Lưu thay đổi</button>
         </div>
     </div>
 </div>   
+{%endblock%}
+
+{% block script%}
+<script>
+    $(document).ready(function(){
+        var testIds_delete =[];
+        var testIds_modify=[];
+        var time_todo;
+        var new_date;
+        $(".btnDelete").click(function(){
+            $(this).parent().parent().hide();
+            testIds_delete.push(this.id);
+        });
+        $(".btnModify").click(function(){
+            testId = this.id;
+            console.log(testId);
+            testId = testId.slice(0, -1); 
+            console.log(testId);
+            $(".hide_"+testId).hide();
+            $("#save_"+testId).show();
+            $("#date_"+testId).show();
+            $("#new_time_todo_"+testId).show();
+            $("#new_time_todo_"+testId).blur(function(){
+                new_time_todo = $(this).val();
+            });
+            $("#date_"+testId).blur(function(){
+                new_date=$(this).val();
+            });
+            $("#save_"+testId).click(function(){
+                $.ajax({
+                    url: "/testModify",
+                    type: 'post',
+                    data:{
+                        testId: JSON.stringify(testId),
+                        new_date: JSON.stringify(new_date),
+                        new_time_todo: JSON.stringify(new_time_todo)
+                    },
+                    dataType: 'json',
+                    success: function(res){
+                        if (res.status){
+                            alert("Chỉnh sửa bài thi thành công!");
+                            window.location.reload();
+                        }
+                    },
+                    error: function(error){
+                        console.log(error);
+                    }
+                })
+            });
+        });
+
+        $("#saveAll").click(function(){
+            $.ajax({
+                url: "/deleteTests",
+                type: 'post',
+                data:{
+                    testIds_delete: JSON.stringify(testIds_delete)  
+                },
+                dataType: 'json',
+                success: function(res){
+                    if (res.status){
+                        alert("Lưu thay đổi thành công!");
+                        window.location.reload();
+                    }
+                },
+                error: function(error){
+                    console.log(error())
+                }
+            })
+        })
+
+    })
+</script>
 {%endblock%}

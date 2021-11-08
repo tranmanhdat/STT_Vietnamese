@@ -3,13 +3,13 @@
 <title>Quản lý lớp</title>
 {%endblock%}
 {%block script_extra%}
-<script src="../static/js/DataTables/datatables.min.js"></script>
+<!-- <script src="../static/js/DataTables/datatables.min.js"></script>
 <script src="../static/js/DataTables/DataTables-1.11.3/js/dataTables.bootstrap4.min.js"></script>
 <script>
      $(document).ready(function(){
         $('#myTable').dataTable({});
      })
-</script>   
+</script>    -->
 {%endblock%}
 
 {%block content%}
@@ -22,25 +22,25 @@
             <h4>
                 Số bài thi, kiểm tra: {{numTests}}
             </h4>
-            <table class="table table-striped" id="myTable">
+            <table class="table table-striped" id="myTable" style="width:90%">
                 <thead>
                     <tr>
                         <td>STT</td>
                         <td>Mã học viên</td>
                         <td>Tên đầy đủ</td>
                         {% for name in testNames%}
-                        <td style="width: 8%">{{name}}</td>
+                        <td style="width: 5%">{{name}}</td>
                         {%endfor%}
                     </tr>
                 </thead>
                 <tbody>
                     {% for i in range(0, studentNum) %}
                     <tr>
-                        <td>{{i}}</td>
+                        <td>{{i+1}}</td>
                         <td>{{studentCodes[i]}}</td>
                         <td>{{studentNames[i]}}</td>
-                        {% for i in range(0,numTests) %}
-                        <td style="width: 8%">{{marks[i]}}</a></td>
+                        {% for j in range(0,numTests) %}
+                        <td style="width: 5%">{{marks[i][j]}}</a></td>
                         {%endfor%}
                     </tr>
                     {%endfor%}

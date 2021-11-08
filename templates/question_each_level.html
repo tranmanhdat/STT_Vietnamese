@@ -1,0 +1,114 @@
+{%extends "teachers_Layout.html"%}
+
+{%block title%}
+<title>Thống kê giáo viên</title>
+{%endblock%}
+
+{%block content%}
+<div class="col-9 grid-margin">
+    <div class="card">
+        <h3>Câu hỏi mức độ {{level}}/10: </h3>
+        <div class="card-body">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>STT</th>
+                        <th>Nội dung</th>
+                        <th>Controls</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i in range(0, num)%}
+                    <tr id="{{question_ids[i]}}">
+                        <td>{{i+1}}</td>
+                        <td>{{question_contents[i]}}</td>
+                        <td>
+                            <button class="btn btn-outline-info btn-modify" id="modify_{{question_ids[i]}}">Chỉnh sửa</button>
+                            <input type="text" name="" id="quesId_{{question_ids[i]}}" style="display: none" class="input_text">
+                            <button class="btn btn-outline-danger btn-delete" id="delete_{{question_ids[i]}}">Xóa</button>
+                            <button class="btn btn-outline-success btn-save" id="save_{{question_ids[i]}}" style="display:none">Lưu</button>
+                        </td>
+                    </tr>
+                    {%endfor%}
+                </tbody>
+            </table>
+            <button class="btn btn-primary" id="saveAll">Lưu thay đổi vào bộ câu hỏi</button>
+        </div>
+    </div>
+</div>
+{%endblock%}
+
+{% block script%}
+<script src="../static/js/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function(){
+        var level = {{level}};
+        var delete_arr=[];
+        var newContent;
+        $(".btn-modify").click(function(){
+            var quesId = $(this).parent().parent().attr("id");
+            console.log(quesId)
+            $(this).hide();
+            $("#quesId_"+quesId).show();
+            $("#save_"+quesId).show();
+            $("#delete_"+quesId).hide();
+        });
+        $(".btn-delete").click(function(){
+            $(this).parent().parent().hide();
+            delete_arr.push($(this).parent().parent().attr("id"));
+        });
+
+        // khi bấm xóa: mới chỉ display none thôi chứ chưa lưu db
+        $(".btn-save").click(function(){
+            var quesId = $(this).parent().parent().attr("id");
+            newContent = $("#quesId_"+quesId).val();
+            console.log(newContent);
+            $.ajax({
+                url: '/question_each_level/{{level}}',
+                type: 'post',
+                data: {
+                    newContent: JSON.stringify(newContent),
+                    quesId: JSON.stringify(quesId),
+                },
+                dataType: "json",
+                success: function(res) {
+                    if (res.status) {
+                        alert("Chỉnh sửa thành công!");
+                        window.location.reload();
+                    }
+                },
+                error: function(error) {
+                    console.log(error);
+                }
+
+            });
+        });
+        $("#saveAll").click(function(){
+            console.log(delete_arr);
+            $.ajax({
+                url: '/eraseQuestions',
+                type: 'post',
+                data: {
+                    delete_arr: JSON.stringify(delete_arr)
+                },
+                dataType: 'json',
+                success: function(res) {
+                    if (res.status) {
+                        alert("Lưu thành công!");
+                        window.location.reload();
+                    }
+                },
+                error: function(error) {
+                    console.log(error);
+                }
+            })
+        })
+    });
+</script>
+{%endblock%}
+
+
+
+                   
+
+

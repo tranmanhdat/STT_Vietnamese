@@ -29,11 +29,10 @@ for (let i=0;i<sen_id.length;i++ ) {
     }, false);
     arrStopButton[i].addEventListener("click", function () {
         stopRecording(i);
-        make_progress(audios,i);
+        // make_progress(audios,i);
     }, false);
 
 }
-
 
 
 function startRecording(stt) {
@@ -83,9 +82,9 @@ function stopRecording(_id) {
 }
 
 function make_progress(audios,index){
-    list = document.getElementsByTagName("audio");
-    count = list.length+1;
-    console.log(count)
+    list = document.getElementsByClassName("done");
+    count = list.length;
+    console.log("count",count)
     
     var percent = (count/sen_id.length)*100;
     console.log(progress_bar)
@@ -97,7 +96,7 @@ function make_progress(audios,index){
 
 function createDownloadLink(blob) {
     console.log("current id : "+sen_id[cur_id]);
-    var filename = username+"_" +sen_id[cur_id]+".wav";
+    var filename = username+"_"+testId + "_" +sen_id[cur_id]+".wav";
     fileNames[cur_id] = filename;
     arrBlob[cur_id] = blob;
     let url = URL.createObjectURL(blob);
@@ -118,9 +117,44 @@ function alert_function(message){
 }
 
 function upload() {
-    if (Array.isArray(arrBlob) && arrBlob.length && arrBlob.length >0) {
-        let xhr = new XMLHttpRequest();
+        // var xhr = new XMLHttpRequest();
+        // var fd = new FormData();
+        // if (Array.isArray(arrBlob) && arrBlob.length && arrBlob.length >0) {
+        
+        // // fd.append("audio_data", arrBlob[0], fileNames[0]);
+        // for (let j=0;j<sen_id.length;j++){
+        //     if (arrBlob[j]!=undefined)
+        //         fd.append("audio_data", arrBlob[j], fileNames[j]);
+        //     // alert(fileNames[j]);
+        //     // console.log(fileNames[j]);
+        // }
+        // }
+
+        // else{
+        //     alert("Chưa có file thu âm nào!");
+        //     fd.append("testId",testId);
+        // }
+        
+        // xhr.onreadystatechange=function(){
+        //     if (xhr.readyState== 4 && this.status == 200){
+        //         console.log(this.responseText["mark"]);
+        //         result=JSON.parse(this.responseText)
+        //         alert("Chúc mừng bạn đã hoàn thành bài thi của mình với điểm số: "+result["mark"]);
+        //     }
+        //     else{
+        //         console.log("false");
+        //     }
+        // }
+        // xhr.open("POST", "/compare", true);
+        // xhr.send(fd);
+        // var result = xhr.responseText;
+        // window.location = "/profile";
+        
+    
+        var xhr = new XMLHttpRequest();
         var fd = new FormData();
+        xhr.open("POST", "/compare", true);
+        
         // fd.append("audio_data", arrBlob[0], fileNames[0]);
         for (let j=0;j<sen_id.length;j++){
             if (arrBlob[j]!=undefined)
@@ -128,16 +162,25 @@ function upload() {
             // alert(fileNames[j]);
             // console.log(fileNames[j]);
         }
-        xhr.open("POST", "/compare", true);
+        fd.append("testId",testId)
+
+        
+        xhr.onreadystatechange=function(){
+            console.log("readystate",this.readyState)
+            if (this.readyState === XMLHttpRequest.DONE && this.status === 200){
+                result=JSON.parse(this.responseText)
+                console.log(result["mark"])
+                alert("Chúc mừng bạn đã hoàn thành bài thi của mình với điểm số: "+result["mark"]);
+            }
+            else{
+                console.log("false");
+            // alert("Eror")
+                
+            }
+        }
+
+       
         xhr.send(fd);
-        alert("Tải lên thành công!");
-        // window.location = "/compare";
-        var result = xhr.responseText;
-        console.log(result)
-}
-    else{
-        alert("Chưa có file thu âm nào!");
-        // window.location= "/"
-        window.location.reload()
-    }
+       
+       
 }

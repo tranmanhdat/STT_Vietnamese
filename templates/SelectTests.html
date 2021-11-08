@@ -36,7 +36,13 @@
                             <td>{{test[3]}}</td>
                             <td>{{test[4]}} phút</td>
                             <td>{{test[5]}}</td>
+                            {% if test[6]=="Làm bài" %}
                             <td><button class="btn btn-info" id="{{test[0]}}_{{test[2]}}"><a href="{{url_for('Tests',testId=test[0],code=test[2])}}">{{test[6]}}</a></button></td>
+                            {%elif test[6]=="Quá hạn"%}
+                            <td style="color:red">{{test[6]}}</td>
+                            {%else%}
+                            <td>{{test[6]}}</td>
+                            {%endif%}
                         </tr>
                         {%endfor%}
                     </tbody>

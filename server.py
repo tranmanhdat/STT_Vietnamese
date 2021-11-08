@@ -1,12 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from datetime import time
+from datetime import date, time, datetime
 from functools import partial
 from os import curdir
+from random import randint
 from sqlite3.dbapi2 import connect
 import sys
 from flask import Flask, render_template, request, json, redirect, url_for, \
-    session
+    session,send_file
+from flask.wrappers import Response
+from werkzeug.utils import secure_filename
+from flask.helpers import flash
 # from flashlight_model import FlashlightModel
 from audioUtils import standard_file
 import sqlite3
@@ -19,9 +23,13 @@ from students_get_Tests import students_get_Tests
 from get_each_class_info import get_each_class_info
 from get_each_student_info import get_each_student_info
 import math
+import os
+import datetime
+import requests
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '1234567891011121'
+app.config['UPLOAD_FOLDER'] = os.getcwd()+ '/static/audios'
 # app.config["SESSION_PERMANENT"] = False
 # app.config["SESSION_TYPE"] = "filesystem"
 # Session(app)
@@ -79,7 +87,9 @@ def log_in():
                 user = c.fetchone()
                 des = user[3]
                 fullname = user[4]
+                print(fullname)
                 id = user[0]
+                print(id)
             session['id'] = id
             session['username'] = username
             session['des'] = des
@@ -228,7 +238,6 @@ def createTests():
             classIds= classIds+item+" "
             classIds_int.append(int(item))
 
-        print("classIds_int nè: ", classIds_int)
         time_todo = int(info['time_ToDo'])
         time_submit = info['time_Submit']
         tmp = time_submit.split('T')[0].split('-')
@@ -247,7 +256,6 @@ def createTests():
         with sqlite3.connect("database.db") as conn:
             try:
                 c= conn.cursor()
-                c.execute("PRAGMA foreign_keys = ON")
                 c.execute("insert into Tests(teacherId,type, codesNum, quesNum, classIds, time_todo, time_submit) values(?,?,?,?,?,?,?)",(teacherId, typeTest, codesNum, quesNum,classIds, time_todo, time_submit))
                 #  tìm id của test => insert (classId, testId)
                 c.execute("select id from Tests")
@@ -292,16 +300,14 @@ def createTests():
                 classes.append(class_)
     
         return render_template("createTests.html", fullname = fullname, classes = classes)
-@app.route("/teacher_collect")
-def teacher_collect():
-        print("da thuc hien den day")
+
+@app.route("/teacher_collection")
+def teacher_collection():
         id = session.get('id')
-        print("id", id)
         with sqlite3.connect("database.db") as conn:
             c = conn.cursor()
             c.execute("select id from teachers where userId ={0} ".format(id))
             teacher_id = c.fetchone()[0]
-        print("teacher_id", teacher_id)
         fullname = session.get('fullname')
         with sqlite3.connect("database.db") as conn:
             c = conn.cursor()
@@ -313,7 +319,6 @@ def teacher_collect():
         num = 0
         for item in temp_arr:
             if (item[2]==1):
-                print("level1",level1)
                 level1.append(item[1])
             if (item[2]==2):
                 level2.append(item[1])
@@ -333,7 +338,6 @@ def teacher_collect():
                 level9.append(item[1])
             if (item[2]==10):
                 level10.append(item[1])
-            print(level1)
         questions.append(len(level1))
         questions.append(len(level2))
         questions.append(len(level3))
@@ -347,19 +351,118 @@ def teacher_collect():
         for i in questions:
             num = num+i
 
-        print("questions", questions)
-
         # ===== tìm số bài thi đã tạo =====
         with sqlite3.connect("database.db") as conn:
             c = conn.cursor()
             c.execute("select * from Tests where teacherId = {0}".format(teacher_id))
             tests = c.fetchall()
-            print("tests", tests)
         numTests = len(tests)
+        for test in tests:
+            print(test)
+            day_prev = test[7]
+            day_prev=day_prev.split("/")
+            time1 = datetime.datetime(int(day_prev[2]),int(day_prev[1]
+            ),int(day_prev[0]),23,59)   # hạn nộp bài
+            time2 = datetime.datetime.now()  # thời gian hiện tại
+            if time1>time2:
+                flag = True  # cho phép làm
+
+            else:
+                flag=False  # không cho làm
+                c.execute("select * from studentTest_Rela where testId={0}".format(int(test[0])))
+                num_students=len(c.fetchall())
+                c.execute("update Tests set description='{0}' where teacherId ={1} and id={2}".format(str(num_students),teacher_id,int(test[0]) ))
+                conn.commit()
+        with sqlite3.connect("database.db") as conn:
+            c = conn.cursor()
+            c.execute("select * from Tests where teacherId = {0}".format(teacher_id))
+            tests = c.fetchall()
         return render_template("teacher_collection.html",fullname = fullname, questions=questions, num = num, numTests= numTests, tests = tests )
-@app.route("/question_each_level/<int:level>")
+
+@app.route("/get_each_test_info/<int:testId>")
+def get_each_test_info(testId):
+    fullname = session.get('fullname')
+    id = session.get('id')
+    with sqlite3.connect("database.db") as conn:
+        c = conn.cursor()
+        c.execute("select id from teachers where userId ={0} ".format(id))
+        teacher_id = c.fetchone()[0]
+    with sqlite3.connect("database.db") as conn:
+        c = conn.cursor()
+        c.execute("select * from Tests where id={0}".format(testId))
+        test=c.fetchone()
+        if int(test[2])==1:
+            testName = "giữa kỳ"
+        if int(test[2])==2:
+            testName = "cuối kỳ"
+        if int(test[2])==3:
+            testName = "tốt nghiệp"
+        c.execute("select * from testCodes where testId ={0}".format(testId))
+        all_codes=[]
+        for item in c.fetchall():
+            each_code=[]
+            question_ids = []
+            levels=[]
+            contents=[]
+            each_code.append("00"+str(item[2]))  # lấy mã đề  // 0
+            temps = str(item[3]).split()  # mảng chứa id của các câu ở dạng string
+            for id in temps:
+                id = int(id)
+                c.execute("select * from questionsLib where id ={0}".format(id))
+                question = c.fetchone()
+                if question:
+                    contents.append(question[1])
+                    levels.append(question[2])
+            each_code.append(len(contents))   # 1
+            each_code.append(contents)  # 2
+            each_code.append(levels)  # 3
+            all_codes.append(each_code)
+        
+        conn.commit()
+    
+    return render_template("get_each_test_info.html", fullname =fullname, test=test, testName=testName, all_codes=all_codes,testId=testId)
+
+@app.route("/question_each_level/<int:level>", methods=['POST','GET'])
 def question_each_level(level):
-    return render_template("question_each_level.html")
+    if request.method == 'POST':
+        newContent = json.loads(request.form["newContent"])
+        quesId = int(json.loads(request.form["quesId"]))
+        flag = True
+        with sqlite3.connect("database.db") as conn:
+            try:
+                c = conn.cursor()
+                if newContent:
+                    c.execute("update questionsLib set content = '{0}' where id = {1}".format(newContent,quesId)) 
+                conn.commit()
+
+            except:
+                flag = False
+                conn.rollback()
+        if flag:
+            return json.dumps({"status": True})
+    else:
+        fullname = session.get('fullname')
+        id = int(session.get('id'))
+        with sqlite3.connect("database.db") as conn:
+            c = conn.cursor()
+            c.execute("select id from teachers where userId = {0}".format(id))
+            teacherId = c.fetchone()[0]
+        question_contents=[]
+        question_ids =[]
+        with sqlite3.connect("database.db") as conn:
+            try:
+                c = conn.cursor()
+                c.execute("select * from questionsLib where teacherId = {0} and level = {1}".format(teacherId, level))
+                for item in c.fetchall():
+                    question_contents.append(str(item[1]))
+                    question_ids.append(int(item[0]))
+                conn.commit()
+            except:
+                conn.rollback()
+
+        return render_template("question_each_level.html", fullname = fullname, question_contents= question_contents, level = level, num = len(question_contents), question_ids =question_ids)
+
+
 @app.route("/classManagement")
 def classManagement():
     fullname = session.get('fullname')
@@ -385,7 +488,6 @@ def classManagement():
 def classInfo(classId):
     fullname = session.get('fullname')
     className, studentCodes, studentNames, testNames, marks= get_each_class_info(classId)
-    print("testNames", testNames)
 
     return render_template("classInfo.html", fullname=fullname, className= className,studentNum = len(studentNames), studentCodes = studentCodes, studentNames = studentNames, testNames= testNames, marks = marks,numTests = len(testNames))
 
@@ -415,11 +517,38 @@ def selectTests():
         c = conn.cursor()
         c.execute("select id from students where userId = {0}".format(id))
         studentId = c.fetchone()[0]
-        print("studentId", studentId)
     Tests = students_get_Tests(studentId)
-    print("Tests", Tests)
     return render_template("SelectTests.html", Tests = Tests, fullname = fullname)
 
+@app.route("/test_time/<int:testId>", methods=['POST'])
+def test_time(testId):
+    if request.method == 'POST':
+        id=int(session.get('id'))
+        with sqlite3.connect("database.db") as conn:
+            c = conn.cursor()
+            c.execute("select id from students where userId = {0}".format(id))
+            studentId = c.fetchone()[0]
+        time1 =datetime.datetime.now()
+        time_start = str(time1.strftime('%X'))
+        flag=True
+        with sqlite3.connect("database.db") as conn:
+            try:
+                c = conn.cursor()
+                print("time_start khi update",time_start)
+                print(testId, studentId)
+                c.execute("select time_start from studentTest_Rela where testId ={0} and studentId={1}".format(testId, studentId))
+                print("chưa đến đây")
+                temp = c.fetchone()[0]
+                print("temp", temp)
+                if not temp:
+                    c.execute("update studentTest_Rela set time_start='{0}' where testId ={1} and studentId ={2} ".format(time_start,testId, studentId))
+                conn.commit()
+            except:
+                print("false")
+                flag = False
+                conn.rollback()
+        if flag==True:
+            return json.dumps({'status':True})
 
 @app.route("/gettransFile", methods=['POST', 'GET'])
 def get_trans_file():
@@ -451,41 +580,48 @@ def Exams(id):
 @app.route("/Tests/<int:testId>/<int:code>", methods=['GET', 'POST'])
 def Tests(testId, code):
         id=session.get('id')
-        fullname = session.get('fullname')
-        print("testId", testId)
-        print("code", code)
+        print("id",id)
+        fullname = session.get('fullname')    
         with sqlite3.connect("database.db") as conn:
             c = conn.cursor()
+            c.execute("select studentCode from students where userId ={0}".format(int(id)))
+            studentCode = c.fetchone()[0]
+            c.execute("select id from students where userId ={0}".format(int(id)))
+            studentId = c.fetchone()[0]
             c.execute("select quesIds from testCodes where testId={0} and code ={1}".format(testId, code))
             quesIds = c.fetchone()[0]
         quesIds = quesIds.split(" ")
-        quesIds.pop()
         id_arr=[]
         content_arr=[]
         for item in quesIds:
             if item!=' ':
                 item = int(item)
-                id_arr.append(item)
-                with sqlite3.connect("database.db") as conn:
-                    c=conn.cursor()
-                    c.execute("select content from questionsLib where id={0}".format(item))
-                    content = c.fetchone()[0]
-                    content_arr.append(content)
-        print("id_arr", id_arr)
-        print("content_arr", content_arr)
+                c.execute("select * from questionsLib where id ={0}".format(item))
+                if len(c.fetchall())!=0:
+                    id_arr.append(item)
+                    with sqlite3.connect("database.db") as conn:
+                        c=conn.cursor()
+                        c.execute("select content from questionsLib where id={0}".format(item))
+                        content = c.fetchone()[0]
+                        content_arr.append(content)
         quesNum = len(content_arr)
         with sqlite3.connect("database.db") as conn:
             c = conn.cursor()
             c.execute("select * from Tests where id = {0}".format(testId))
             test = c.fetchone()
-            print(test)
-        # print(test[2])
+            c.execute("select time_start from studentTest_Rela where studentId={0} and testId ={1}".format(studentId,testId))
+            time_start = c.fetchone()[0]
+            if not time_start:
+                now = datetime.datetime.now()
+                time_start = now.strftime("%H:%M:%S")
         if int(test[2])==1:
             name = "Bài kiểm tra giữa kỳ"
-        else:
+        if int(test[2])==2:
             name = "Bài thi cuối kỳ"
+        if int(test[2])==3:
+            name="Bài thi tốt nghiệp"
         time_todo=test[6]
-        return render_template("Tests.html", fullname = fullname, quesNum = quesNum, content_arr = content_arr, id_arr = id_arr, name = name, time_todo= time_todo, id= id)
+        return render_template("Tests.html", fullname = fullname, quesNum = quesNum, content_arr = content_arr, id_arr = id_arr, name = name, time_todo= time_todo, id= id, studentCode=studentCode, testId=testId, time_start=time_start)
 
 
 @app.route("/transFile", methods=['POST', 'GET'])
@@ -550,29 +686,27 @@ def createQuestionsTeachers():
 @app.route("/eraseQuestions", methods=['POST'])
 def eraseQuestion():
     if request.method == "POST":
+        delete_arr = json.loads(request.form["delete_arr"])
         id = int(session.get('id'))
-        print("id ne ")
-        print(id)
         with sqlite3.connect("database.db") as conn:
             c = conn.cursor()
             c.execute("select id from teachers where userId = {0}".format(id))
             teacherId = c.fetchone()[0]
 
-        questionId = request.form['id']
-        questionId = int(json.loads(questionId))
         flag = True
         with sqlite3.connect("database.db") as conn:
             try:
                 c = conn.cursor()
-                c.execute("delete from questionsLib where id = {0}".format(questionId))
+                for id in delete_arr:
+                    quesId = int(id)
+                    c.execute("delete from questionsLib where id ={0}".format(quesId))
                 conn.commit()
             except:
                 flag = False
                 conn.rollback()
         if flag == True:
             return json.dumps({'status': True})
-    else:
-        redirect("/createQuestionsTeachers")
+
 
 # ======= Admin =======
 @app.route("/createExamsAdmin", methods=['POST', 'GET'])
@@ -580,11 +714,8 @@ def createExamsAdmin():
     fullname = session.get('fullname')
     if request.method == 'POST':
         categoryName = json.loads(request.form['categoryName'])
-        print("categoryName", categoryName)
         contents = json.loads(request.form['contents'])
-        print("contents", contents)
         levels = json.loads(request.form['levels'])
-        print("levels", levels)
         flag = True
         with sqlite3.connect("database.db") as conn:
             try:
@@ -592,7 +723,6 @@ def createExamsAdmin():
                 c.execute("insert into category(categoryName) values(?)", (categoryName,))
                 c.execute("select id from category where categoryName = '{0}'".format(categoryName))
                 categoryId = int(c.fetchone()[0])
-                print("categoryId", categoryId)
                 for i in range(0, len(contents)):
                     c.execute("insert into questions(content, categoryId,level) values(?,?,?)", (contents[i],categoryId, int(levels[i])))
                 conn.commit()
@@ -605,6 +735,99 @@ def createExamsAdmin():
     else:
         category_info = get_category()
         return render_template("createExamsAdmin.html", fullname = session.get('fullname'), category_info = category_info, num = len(category_info))
+
+@app.route("/downloadTest/<int:testId>")
+def downloadTest(testId):
+    print("testId",testId)
+    with sqlite3.connect("database.db") as conn:
+        c = conn.cursor()
+        c.execute("select * from Tests where id={0}".format(testId))
+        test=c.fetchone()
+        if int(test[2])==1:
+            testName = "Đề thi giữa kỳ"
+        if int(test[2])==2:
+            testName = "Đề thi cuối kỳ"
+        if int(test[2])==3:
+            testName = "Đề thi tốt nghiệp"
+    with sqlite3.connect("database.db") as conn:
+        c = conn.cursor()
+        c.execute("select * from Tests where id={0}".format(testId))
+        test=c.fetchone()
+        numQues= test[4]
+        time_todo=test[6]
+        time_submit =test[7] 
+        c.execute("select * from testCodes where testId ={0}".format(testId))
+        all_codes=[]
+        for item in c.fetchall():
+            each_code=[]
+            question_ids = []
+            levels=[]
+            contents=[]
+            each_code.append("00"+str(item[2]))  # lấy mã đề  // 0
+            temps = str(item[3]).split()  # mảng chứa id của các câu ở dạng string
+            for id in temps:
+                id = int(id)
+                c.execute("select * from questionsLib where id ={0}".format(id))
+                question = c.fetchone()
+                if question:
+                    contents.append(question[1])
+                    levels.append(question[2])
+            each_code.append(len(contents))   # 1
+            each_code.append(contents)  # 2
+            each_code.append(levels)  # 3
+            all_codes.append(each_code)    
+    file_download = "static/testId_"+str(testId)+".xls"
+    with open(file_download,"w+",encoding="utf-8" ) as f_write:
+        f_write.write(testName+"\nSố câu"+str(numQues)+"\nThời gian làm bài: "+str(time_todo)+"\n")
+        for i in range(0,len(all_codes)):
+            f_write.write("Mã đề: "+str(all_codes[i][0])+"\n")
+            f_write.write("STT\tNội dung\tMức độ\n")
+            for j in range(0, all_codes[i][1]):
+                f_write.write(str(j+1)+"\t"+str(all_codes[i][2][j])+"\t"+str(all_codes[i][3][j])+"\n")
+    return send_file(file_download, as_attachment=True)    
+
+@app.route("/testModify", methods=['POST'])
+def testModify():
+    if request.method == 'POST':
+        testId = int(json.loads(request.form['testId']))
+        new_date=json.loads(request.form['new_date'])
+        new_date = new_date.split("-")
+        new_date=str(new_date[2])+"/"+str(new_date[1])+"/"+str(new_date[0])
+        new_time_todo=json.loads(request.form['new_time_todo'])
+        flag= True
+        with sqlite3.connect("database.db") as conn:
+            try:
+                c = conn.cursor()
+                c.execute("update Tests set time_todo='{0}' where id ={1}".format(new_time_todo,testId))
+                c.execute("update Tests set time_submit='{0}' where id ={1}".format(new_date,testId))
+                conn.commit()
+            except:
+                print("False")
+                flag=False
+                conn.cursor()
+        return json.dumps({"status":True})
+
+@app.route("/deleteTests",methods=['POST'])
+def deleteTests():
+    if request.method=='POST':
+        testIds_delete= json.loads(request.form['testIds_delete'])
+        print(testIds_delete)
+        flag= True
+        with sqlite3.connect("database.db") as conn:
+            try:
+                c = conn.cursor()
+                for id in testIds_delete:
+                    c.execute("delete from Tests where id={0}".format(int(id)))
+                    c.execute("delete from classTest_Rela where testId={0}".format(int(id)))
+                    c.execute("delete from studentTest_Rela where testId={0}".format(int(id)))
+                    c.execute("delete from testCodes where testId={0}".format(int(id)))
+                conn.commit()
+            except:
+                flag=False
+                print("False")
+                conn.rollback()
+        if flag:   
+            return json.dumps({"status":True})
 
 @app.route("/test")
 def test():
@@ -640,38 +863,112 @@ def recog_file():
 
 @app.route('/compare', methods=['GET', 'POST'])
 def compare():
-    res = 0
+    # res = 0
     if request.method == 'POST':
-        text_random = request.form['text_random'].lower()
-        text_trans = request.form['text_record'].lower()
-        dp = []
-        for i in range(0, len(text_random), 1):
-            a = []
-            for j in range(0, len(text_trans), 1):
-                a.append(1000000)
-            dp.append(a)
-        dp[0][0] = 0
-        dp[0][1] = 1
-        dp[1][0] = 1
-        for i in range(1, len(text_random), 1):
-            for j in range(1, len(text_trans), 1):
-                if text_random[i - 1] == text_trans[j - 1]:
-                    dp[i][j] = dp[i - 1][j - 1]
-                dp[i][j] = min(dp[i][j],
-                               min(dp[i - 1][j] + 1, dp[i][j - 1] + 1))
-        ts = len(text_trans) - dp[len(text_random) - 1][len(text_trans) - 1]
-        result = (ts / len(text_trans)) * 100
-        res = result
-    res = abs(res)
-    if res != 100:
-        if res > 100:
-            res = res % 100
-        res = round(res, 2)
+        # text_random = request.form['text_random'].lower()
+        # text_trans = request.form['text_record'].lower()
+        # dp = []
+        # for i in range(0, len(text_random), 1):
+        #     a = []
+        #     for j in range(0, len(text_trans), 1):
+        #         a.append(1000000)
+        #     dp.append(a)
+        # dp[0][0] = 0
+        # dp[0][1] = 1
+        # dp[1][0] = 1
+        # for i in range(1, len(text_random), 1):
+        #     for j in range(1, len(text_trans), 1):
+        #         if text_random[i - 1] == text_trans[j - 1]:
+        #             dp[i][j] = dp[i - 1][j - 1]
+        #         dp[i][j] = min(dp[i][j],
+        #                        min(dp[i - 1][j] + 1, dp[i][j - 1] + 1))
+        # ts = len(text_trans) - dp[len(text_random) - 1][len(text_trans) - 1]
+        # result = (ts / len(text_trans)) * 100
+        # res = result
+        #  tính thời gian làm bài của 
 
-        # ///////////////
-        print("res ne: ", res)
-    return json.dumps({'res1': res})
+        #  xử lý điểm
+        mark = 0.0
 
+        flag = True
+        # note: tạo folder và lưu vào đây
+        id = int(session.get('id'))
+        with sqlite3.connect("database.db") as conn:
+            c= conn.cursor()
+            c.execute("select studentCode from students where userId ={0}".format(id))
+            studentCode = c.fetchone()[0] 
+            c.execute("select id from students where userId ={0}".format(id))
+            studentId= c.fetchone()[0]
+        files = request.files.getlist('audio_data')
+        print(files)
+        print( "testId",request.form["testId"])
+        testId=int(request.form["testId"])
+        # nếu không có file nào => lưu điểm 0 vào database
+        if len(files)==0:
+            with sqlite3.connect("database.db") as conn:
+                try:
+                    c = conn.cursor()
+                    c.execute("update studentTest_Rela set mark={0} where studentId = {1} and testId={2}".format(mark,studentId,testId))
+                    conn.commit()
+                except:
+                    conn.rollback()
+                    flag=False
+        else:
+            for file in files:
+                if file:
+                    # lấy testId từ filename
+                    filename= secure_filename(file.filename)
+                    print("filename",filename)
+                    # testId = int(filename.split('_')[1])
+                    folder_name = studentCode+"_"+str(testId)
+                    folder_upload = os.path.join(str(app.config['UPLOAD_FOLDER']),folder_name)
+                    if not os.path.exists(folder_upload):
+                        os.mkdir(folder_upload)
+                    folder_upload = os.path.join(str(app.config['UPLOAD_FOLDER']), folder_name)
+                    # lưu file vào folder_upload
+                    file.save(os.path.join(folder_upload,filename))
+
+                    
+            path_to_folder = os.path.join("static/audios",folder_name)
+            with sqlite3.connect("database.db") as conn:
+                    try:
+                        c = conn.cursor()
+                        #  lưu đường dẫn của folder vào db
+                        c.execute("update studentTest_Rela set save_url='{0}' where studentId = {1} and testId={2}".format(path_to_folder,studentId,testId))
+
+                        # lưu điểm vào db
+
+                        c.execute("update studentTest_Rela set mark={0} where studentId = {1} and testId={2}".format(mark,studentId,testId))
+
+                        c.execute("select * from testCodes where testId={0} ".format(testId))
+                        for item in c.fetchall():
+                            studentIds=item[4]
+                            if str(studentId) in studentIds:
+                                code = int(item[2])
+                        print("test")
+                        conn.commit()
+                    except:
+                        flag = False                          
+                        conn.rollback()
+        if flag==True:  
+            data={
+                'mark':mark
+            }
+            print("đã trả về mark")
+            return json.dumps(data)
+        else:
+            print("false")
+    # res = abs(res)
+    # if res != 100:
+    #     if res > 100:
+    #         res = res % 100
+    #     res = round(res, 2)
+
+    # return json.dumps({'res1': res})
+@app.route("/Test_Result/<int:testId>/<int:code>")
+def show_result(testId,code):
+
+    return render_template("Test_Result")
 
 def splitAudio(filename, sec_per_split):
     filepath = '/tmp/' + filename

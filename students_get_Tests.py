@@ -1,4 +1,7 @@
 import sqlite3
+import datetime
+
+from flask.helpers import flash
 
 
 #  lấy thông tin tất cả những bài Test mà học viên này phải làm show lên bảng
@@ -22,9 +25,10 @@ def students_get_Tests(studentId):
                     #  lấy loại bài - 1
                     if temp1[2]== 1:
                         test.append("Giữa kỳ")
-                    else:
+                    if temp1[2]== 2:
                         test.append("Cuối kỳ")
-
+                    if temp1[2]== 3:
+                        test.append("Tốt nghiệp")
                     #  lấy mã đề - 2
                     test.append(item[2])
 
@@ -36,17 +40,27 @@ def students_get_Tests(studentId):
 
                     #  lấy thời gian nộp - 5
                     test.append(temp1[7])
+                    day_prev = temp1[7]
+                    day_prev=day_prev.split("/")
+                    time1 = datetime.datetime(int(day_prev[2]),int(day_prev[1]),int(day_prev[0]),23,59)   # hạn nộp bài
+                    time2 = datetime.datetime.now()  # thời gian hiện tại
+                    if time1>time2:
+                        flag = True  # cho phép làm
+                    else:
+                        flag=False  # không cho làm
 
                     #  kiểm tra xem đã làm hay chưa - 6
                    
-                    c.execute("select mark from studentTest_Rela where testId={0}".format(testId))
+                    c.execute("select mark from studentTest_Rela where testId={0} and studentId={1}".format(testId,studentId))
 
                     mark = c.fetchone()[0]
-                    if not mark:
-                       
-                        test.append("Làm bài")
+                    if mark==None:
+                        if flag ==True:
+                            test.append("Làm bài")
+                        if flag==False:
+                            test.append("Quá hạn")
                     else:
-                        test.append("Xem điểm")
+                        test.append(mark)
                     Tests.append(test)
         except:
             print("False")

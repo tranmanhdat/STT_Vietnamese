@@ -29,15 +29,21 @@ def get_each_class_info(classId):
             type_ = c.fetchone()[0]
             if type_ == 1:
                 testNames.append("Kiểm tra giữa kỳ")
-            else:
+            if type_==2:
                 testNames.append("Kiểm tra cuối kỳ")
-        print("studentIds", studentIds)
-        print(testId_arr)
+            if type_==3:
+                testNames.append("Bài thi tốt nghiệp")
         for studentId in studentIds:
-            for i in range(0, len(testId_arr)):    
+            mark=[]
+            print("studentId", studentId)
+            for i in range(0, len(testId_arr)):   
                 c.execute("select mark from studentTest_Rela where testId = {0} and studentId = {1} ".format(testId_arr[i][0], studentId))
-                for each in c.fetchall():
-                    marks.append(each[0])
+                temp = c.fetchone()
+                if not temp:
+                    mark.append(None)
+                else:
+                    mark.append(temp[0])
+            marks.append(mark)
         print("marks", marks)
     return className, studentCodes, studentNames, testNames, marks
 

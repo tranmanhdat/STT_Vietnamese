@@ -1,0 +1,76 @@
+{% extends "teachers_Layout.html"%}
+
+{%block title%}
+<title>Thống kê bài kiểm tra</title>
+{%endblock%}
+{%block content%}
+<div class="col-9 grid-margin">
+    <div class="card">
+        <div class="card-body">
+            <h3>Thông tin bộ đề: Kiểm tra {{testName}}</p>
+            <h4>Số mã đề: {{test[3]}}</h4> 
+            <h4>Số câu: {{test[4]}}</h4>
+            <h4>Thời gian làm bài: {{test[6]}} phút</h4>
+            <h4>Hạn cuối nộp bài: {{test[7]}}</h4>
+            <h4>Số học viên đã làm: {{test[8]}}</h4>
+            <button class="btn btn-warning" id="downloadBtn"><a href="{{url_for('downloadTest',testId=testId)}}">Tải về</a></button>
+        {%for i in range(0,test[3]) %}
+            <h4>Mã đề: {{all_codes[i][0]}}</h4>
+            <table class="col-8 table table striped">
+                <thead>
+                    <tr>
+                        <th>STT</th>
+                        <th>Nội dung câu hỏi</th>
+                        <th>Mức độ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {%for j in range(0, all_codes[i][1])%}
+                    <tr>
+                        <td>{{j+1}}</td>
+                        <td>{{all_codes[i][2][j]}}</td>
+                        <td>{{all_codes[i][3][j]}}/10</td>
+                    </tr>
+                    {%endfor%}                   
+                </tbody>
+            </table>
+        {%endfor%}
+        </div>
+
+    </div>
+</div>
+{%endblock%}
+
+{%block script_extra%}
+<!-- <script>
+    $(document).ready(function(){
+        $("#downloadBtn").click(function(){
+            var testId = {{testId}};
+            var numQues= {{test[4]}};
+            var time_todo= {{test[6]}};
+            var all_codes= {{all_codes}};
+            console.log(testId, numQues, time_todo);
+            $.ajax({
+                url: '/download_test',
+                type: 'post',
+                data: {
+                    testId: JSON.stringify(testId),
+                    numQues: JSON.stringify(numQues),
+                    time_todo: JSON.stringify(time_todo),
+                    // all_codes: JSON.stringify(all_codes)
+                }, 
+                dataType: "json",
+                success: function(res) {
+                    if (res.status) {
+                       console.log("Hello")
+                    }
+                },
+                error: function(error) {
+                    console.log(error);
+                }
+            });
+            
+        })
+    })
+</script> -->
+{%endblock%}

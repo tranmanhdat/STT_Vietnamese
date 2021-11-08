@@ -1,0 +1,174 @@
+*{
+    margin: auto;
+}
+video#instruction_background{
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    object-fit: cover;
+    z-index: 10;
+}
+div#instructions{
+    margin: auto!important;
+    line-height: 1.5 ;        
+    justify-content: center;
+    position: fixed;
+    top: 30%;
+    z-index: 15;
+}
+p#instructions_{
+    width: 50%;
+    font-size: 20px;
+    margin:auto;
+    padding-left: 20px;
+}
+div.page-body-wrapper{
+    position: relative;
+}
+ul{
+    list-style: none;
+}
+#backgroundImg{
+    position: fixed;
+    z-index: 0;
+    top:0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+}
+#profileImg-container{
+    width: 60%;
+}
+#profileImg{
+    width: 100%;
+    border-radius: 10px;
+}
+#sidebar{
+    z-index:3; 
+    background: #996666;
+    margin-top: 30px;
+    border-radius: 20px;
+}
+.profile-name{
+    color: #fff;
+    background-color: #003333;
+    margin-top: 50px;
+    padding: 15px;
+    border-radius: 20px;
+    text-align: center;
+    font-size: 17px;
+}
+#left_time{
+    margin-top: 40px;
+    background-color: #ff6633;
+    color: #fff;
+    border-radius: 20px;
+    padding: 20px;
+    font-size: 18px;
+    text-align: center;
+}
+#txt{
+    border: 0;
+    color: red;
+    width: 80%;
+    text-align: center;
+    margin-top: 10px;
+    padding: 2px;
+    line-height: 100%;
+}
+
+ul#questions-container{
+    display: flex;
+    overflow: hidden;
+    position: relative;
+    flex-wrap: nowrap;
+}
+
+.arrow{
+    padding:10px;
+    background-color: #cc0000;
+    width: 50px;
+    text-align: center;
+    border-radius: 50%;
+    cursor: pointer;
+    margin-top: 10px;
+    z-index: 3;
+}
+
+.ques-label{
+    padding: 5px;
+    border-radius: 5px;
+    background-color: #006666;
+    color: #fff;
+    margin-left: 15px;
+    margin-top: 11px;
+    z-index: 2;
+    cursor: pointer;
+}
+
+#uploadBtn{
+    margin-top: 36px;
+    font-size: 18px;
+    background-color: #009999;
+    text-align: center;
+    width: 100%;
+    border-radius: 20px;
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+.show-ques{
+    background-color: #fff;
+    display: flex;
+    border-radius: 20px;
+    height: 538px;
+}
+
+
+.colId{
+    color: #ee0606;
+    text-align: center;
+    padding-top: 38px;
+    font-weight: bold;
+}
+
+.hexagon{
+    background-image: url('../Asset_Record/img/cau.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: top center;
+    height: 120px;
+}
+
+.content-container{
+    background-image: url('../Asset_Record/img/board.jpg');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: top center;
+    height: 350px;
+}
+
+.colContent{
+    color: #fff;
+    text-align: center;
+    padding-top: 50px;
+    font-size: 25px;
+    width: 50%;
+}
+
+.controls{
+    margin-top: 30px;
+    text-align:center;
+
+}
+.column4{
+    text-align: center;
+    margin-top: 15px;
+}
+
+.ques-label.done{
+    opacity: 1;
+}

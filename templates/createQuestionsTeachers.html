@@ -20,32 +20,7 @@
 {%endblock%}
 {% block content %}
 <div class="col-9 grid-margin">
-    <div class="card">
-        <div class="card-body">
-            <h4 class="card-tittle">Số câu hỏi bạn đã tạo: {{num}}</h4>
-           
-            <table class="table table table-striped" id="myTable">     
-                <thead>
-                    <tr>
-                        <th>STT</th>
-                        <th>Nội dung</th>
-                        <th>Mức độ</th>
-                        <th>Xóa</th>
-                    </tr>
-                </thead>
-                <tbody id="tbody">
-                    {% for i in range(0,num)%}
-                        <tr>
-                            <td>{{i}}</td>
-                            <td class="content content_{{i}}">{{questions[i][1]}}</td>
-                            <td class="level level_{{i}}">{{questions[i][2]}}</td>
-                            <td ><button class="btn btn-erase btn-outline-danger" id="{{questions[i][0]}}"  >Xóa</button></td>
-                        </tr>
-                    {%endfor%}
-                </tbody>
-            </table>
-        </div>
-    </div>
+    
     <div class="card">
         <div class="card-body">
             <h4 class="card-title">Tạo câu hỏi:</h4>
@@ -56,7 +31,7 @@
                             <label for="" class="col-sm-3
                                     col-form-label">Số lượng câu hỏi</label>
                             <div class="col-sm-9">
-                                <input type="number" class="form-control" min="1" max="100" value="10" id="numQues" name="numQues">
+                                <input type="number" class="form-control" min="1" max="100" id="numQues" name="numQues">
                             </div>
                         </div>
                     </div>
@@ -74,12 +49,14 @@
 
 {% block script%}
 <script>
+    var numQues_ ;
     $(document).ready(function() {
         var numQues = $("#numQues").val();
         // console.log(numQues)
         // console.log("in da")
         showQuest(numQues);
         $("#numQues").change(function() {
+            numQues_ = $(this).val();
             showQuest($(this).val());
         });
         //get list question
@@ -87,10 +64,19 @@
             var contents = $('input[name="listQuestions[]"]').map(function() {
                 return $(this).val()
             }).get();
-            var levels = $('input[name="listLevels[]"]').map(function(){
+            var levels = $('select[name="listLevels[]"]').map(function(){
                 return $(this).val()
             }).get();
-            
+            let count=0;
+            for (let i=0;i<contents.length;i++){
+                if (contents[i]!="") count++;
+            }
+
+            if (numQues_!=count){
+                console.log(numQues_);
+                alert("Vui lòng nhập đủ nội dung các câu!");
+                return;
+            }
             $.ajax({
                 url: '/createQuestionsTeachers',
                 type: 'post',
@@ -110,29 +96,7 @@
                 }
             })
         });
-        $(".btn-erase").click(function(){
-            // console.log("hello")
-            // console.log(this.id)
-            var id = this.id
-            // console.log(id)
-            $.ajax({
-                url: '/eraseQuestions',
-                type: 'post',
-                data: {
-                    id: JSON.stringify(id)
-                },
-                dataType: "json",
-                success: function(res){
-                    if (res.status) {
-                        alert("Xóa câu hỏi thành công!")
-                        window.location.reload();
-                    }
-                },
-                error: function(error){
-                    console.log(error)
-                }
-            })
-        });
+       
         
     //     $("#key").on('keyup',function(event){
     //         event.preventDefault();
@@ -152,17 +116,30 @@
                                 <div class="form-group row">\
                                     <label class="col-sm-3 col-form-label">Câu hỏi ' + i + '</label>\
                                         <div class="col-sm-9">\
-                                            <input type="text" class="form-control" name="listQuestions[]"/>\
+                                            <input type="text" class="form-control" name="listQuestions[]" required/>\
                                         </div>\
                                     <label class="col-sm-3 col-form-label"> Mức độ</label>\
-                                        <div class = "col-sm-9">\
-                                            <input type="text"\
-                                            class="form-control" name="listLevels[]"/>\
+                                            <div class="col-sm-9">\
+                                                <select class="col-sm-9" \
+                                            class="form-control"\
+                                            name="listLevels[]"/>\
+                                                <option value="1">1</option>\
+                                                <option value="2">2</option>\
+                                                <option value="3">3</option>\
+                                                <option value="4">4</option>\
+                                                <option value="5">5</option>\
+                                                <option value="6">6</option>\
+                                                <option value="7">7</option>\
+                                                <option value="8">8</option>\
+                                                <option value="9">9</option>\
+                                                <option value="10">10</option>\
+                                            </select>\
                                             </div>\
                                 </div>\
                         </div>';
             $("#listQues").append(res);
         }
     }
+     
 </script>
 {%endblock%}

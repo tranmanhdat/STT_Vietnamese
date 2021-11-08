@@ -73,6 +73,9 @@ print(c.fetchall())
 #      FOREIGN KEY(studentId) REFERENCES students(id)
 # )
 # ''')
+# c.execute("alter table studentTest_Rela add save_url text")
+# c.execute("alter table studentTest_Rela add time_start text")
+
 
 # # # # ========== table questionLibrary =======
 # c.execute(''' create table questionsLib(

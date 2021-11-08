@@ -38,6 +38,51 @@
         div.container{
             padding-top: 70px;
         }
+
+        .back-to-top{
+            cursor: pointer;
+            position: fixed;
+            /* bottom: 10px; */
+            top: 80px;
+            right: 40px;
+            width: 80px;
+            height: 80px;
+            line-height: 40px;
+            background-color: #c03636;
+            color: #fff;
+            text-align: center;
+            opacity: .6;
+            font-size: 20px;
+            border-radius: 50%;
+            z-index: 9999;
+            border: 1px solid #c03636;
+            text-align: center;
+            /* line-height: 100%; */
+            padding-top: 23px;
+        }
+
+        .animated-swing{
+            animation:swing 1s both infinite;
+        }
+        @keyframes pulse{
+            0%,100% {-webkit-transform:translate(-100%,-50%) scale(1,1);
+                    transform:translate(-100%,-50%) scale(1,1)
+                }
+            50%{-webkit-transform:translate(-100%,-50%) scale(1.05,1.05);
+                transform:translate(-100%,-50%) scale(1.05,1.05)}
+            }
+        @keyframes swing{
+            20% {-webkit-transform:rotate(15deg);transform:rotate(15deg)}
+            40%{-webkit-transform:rotate(-10deg);transform:rotate(-10deg)}
+            60%{-webkit-transform:rotate(5deg);transform:rotate(5deg)}
+            80%{-webkit-transform:rotate(-5deg);transform:rotate(-5deg)}
+            100%{-webkit-transform:rotate(0);transform:rotate(0)}
+        }
+
+        .back-to-top:hover{
+            color: #000;
+        }
+        
     </style>
 </head>
 
@@ -195,7 +240,7 @@
                     <div id="content">
                         <h3>Kiểm tra tiếng việt - Bộ chủ đề: {{examName}}</h3>
                         <div id="para-area" class="d-flex">
-                            <img src="/static/Asset_Record/img/1.svg" alt="">
+                            <img src="../static/Asset_Record/img/teacher3.png" alt="" style="width:50%">
                             <div class="para-content">
                                 <textarea id="text-random" class="bounding-para" rows="10" cols="59" readonly>
                                     </textarea>
@@ -253,7 +298,7 @@
                     </div>
                 </div>
         
-            </div> -->
+            </div> 
             </div>
             <!-- <div class="content">
                 <div class="content__container">
@@ -276,12 +321,13 @@
         
 
        
-        <div class="score">
-            <h3><span id="mypoint" class="font-weight-bold">0</span></h3>
-            <div class="circle one"></div>
-            <div class="circle two"></div>
-            <div class="circle three"></div>
-        </div>
+        
+
+        <a id="back-to-top" href="#" class="back-to-top animated-swing" role="button" title="Click to return on the top page" style="display: inline;">
+            <h3 id="score">
+                <span id="mypoint" class="">0</span>
+            </h3>
+        </a>
     </div>
     <input type="hidden" name="" id="lstQues" value="{{contents}}">
 </body>

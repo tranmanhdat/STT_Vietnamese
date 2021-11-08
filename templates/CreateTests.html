@@ -22,6 +22,7 @@
                             <select name="type" id="type">
                                 <option value="1">Giữa kỳ</option>
                                 <option value="2">Cuối kỳ</option>
+                                <option value="3">Tốt nghiệp</option>
                             </select>
                         </div>
                        
@@ -38,31 +39,31 @@
                         <div class="form-group row">
                             <label for="" class="col-sm-3 col-form-label">Mức độ 1: </label>
                             <div class="col-sm-9">
-                                <input type="number" name="levels[]" id="level1" value="0" class="form-control">
+                                <input type="number" name="levels[]" id="level1" class="form-control">
                             </div>
                         </div>
                         <div class="form-group row">
                             <label for="" class="col-sm-3 col-form-label">Mức độ 2: </label>
                             <div class="col-sm-9">
-                                <input type="number" name="levels[]" id="level2" value="0" class="form-control">
+                                <input type="number" name="levels[]" id="level2" class="form-control">
                             </div>
                         </div>
                         <div class="form-group row">
                             <label for="" class="col-sm-3 col-form-label">Mức độ 3: </label>
                             <div class="col-sm-9">
-                                <input type="number" name="levels[]" id="level3" value="0"  class="form-control">
+                                <input type="number" name="levels[]" id="level3" class="form-control">
                             </div>
                         </div>
                         <div class="form-group row">
                             <label for="" class="col-sm-3 col-form-label">Mức độ 4: </label>
                             <div class="col-sm-9">
-                                <input type="number" name="levels[]" id="level4" value="0" class="form-control">
+                                <input type="number" name="levels[]" id="level4" class="form-control">
                             </div>
                         </div>
                         <div class="form-group row">
                             <label for="" class="col-sm-3 col-form-label">Mức độ 5: </label>
                             <div class="col-sm-9">
-                                <input type="number" name="levels[]" id="level5" value="0" class="form-control">
+                                <input type="number" name="levels[]" id="level5" class="form-control">
                             </div>
                         </div>
                     </div>
@@ -70,31 +71,31 @@
                         <div class="form-group row">
                             <label for="" class="col-sm-3 col-form-label">Mức độ 6: </label>
                             <div class="col-sm-9">
-                                <input type="number" name="levels[]" id="level6" value="0" class="form-control">
+                                <input type="number" name="levels[]" id="level6" class="form-control">
                             </div>
                         </div>
                         <div class="form-group row">
                             <label for="" class="col-sm-3 col-form-label">Mức độ 7: </label>
                             <div class="col-sm-9">
-                                <input type="number" name="levels[]" id="level7" value="0" class="form-control">
+                                <input type="number" name="levels[]" id="level7" class="form-control">
                             </div>
                         </div>
                         <div class="form-group row">
                             <label for="" class="col-sm-3 col-form-label">Mức độ 8: </label>
                             <div class="col-sm-9">
-                                <input type="number" name="levels[]" id="level8" value="0"  class="form-control">
+                                <input type="number" name="levels[]" id="level8" class="form-control">
                             </div>
                         </div>
                         <div class="form-group row">
                             <label for="" class="col-sm-3 col-form-label">Mức độ 9: </label>
                             <div class="col-sm-9">
-                                <input type="number" name="levels[]" id="level9" value="0" class="form-control">
+                                <input type="number" name="levels[]" id="level9" class="form-control">
                             </div>
                         </div>
                         <div class="form-group row">
                             <label for="" class="col-sm-3 col-form-label">Mức độ 10: </label>
                             <div class="col-sm-9">
-                                <input type="number" name="levels[]" id="level10" value="0" class="form-control">
+                                <input type="number" name="levels[]" id="level10" class="form-control">
                             </div>
                         </div>
                     </div>
@@ -133,9 +134,11 @@
                 <button type="button" class="btn btn-success" id="btn_save">Lưu</button>
                 <button type="button" class="btn btn-danger" data-dismiss="modal">Hủy</button>
             </form>
-            
+            <p>Đến trang <a href="{{url_for('teacher_collection')}}">Thống kê</a> để xem chi tiết</p>
         </div>
+        
     </div>
+    
 </div>
 
 
@@ -158,16 +161,23 @@
             let levels = $("input[name='levels[]']").map(function(){
                 return $(this).val()
             }).get();
-            // let classes = $("input[name='class[]']").map(function(){
-            //     return $(this).val()
-            // }).get();
-            console.log("class nè: ")
-            console.log(classes)
+            
             if (time_ToDo =="" || time_Submit ==""){
                 alert("Yêu cầu nhập đủ thông tin");
                 return;
             }
-            
+            let count=0;
+            for (value of levels){
+                if (value!=""){
+                    count= count+Number(value);
+                }
+            }
+            console.log("count",count)
+            console.log(quesNum)
+            if (count!=quesNum){
+                    alert("Số câu hỏi từng mức độ chưa hợp lệ!");
+                    return;
+            }
             let info = {
                 typeTest: typeTest,
                 codesNum : codesNum,
@@ -177,7 +187,6 @@
                 time_ToDo: time_ToDo,
                 time_Submit: time_Submit  
             }
-            console.log(info)
             $.ajax({
                 url: '/createTests',
                 type: 'post',
@@ -195,10 +204,10 @@
                     console.log(error);
                 }
             })
+           
         });
         
     });
-
-    
+   
 </script>
 {%endblock%}
