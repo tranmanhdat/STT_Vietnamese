@@ -26,7 +26,6 @@ print(c.fetchall())
 # )
 # ''')
 # c.execute("insert into classes(className) values('Công nghệ thông tin 2')")
-print("class ne:")
 c.execute("select * from classes")
 print(c.fetchall())
 
